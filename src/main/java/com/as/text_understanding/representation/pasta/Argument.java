@@ -1,6 +1,6 @@
 package com.as.text_understanding.representation.pasta;
 
-import com.as.text_understanding.representation.tree.TreeNode;
+import com.as.text_understanding.tree_travel.TreeTravelNode;
 
 /**
  * 
@@ -11,7 +11,7 @@ import com.as.text_understanding.representation.tree.TreeNode;
  */
 public class Argument
 {
-	public Argument(ArgumentType type, boolean clause, TreeNode subtree)
+	public Argument(ArgumentType type, boolean clause, TreeTravelNode subtree)
 	{
 		super();
 		this.type = type;
@@ -29,7 +29,7 @@ public class Argument
 	{
 		return clause;
 	}
-	public TreeNode getSubtree()
+	public TreeTravelNode getSubtree()
 	{
 		return subtree;
 	}
@@ -38,5 +38,5 @@ public class Argument
 
 	private final ArgumentType type;
 	private final boolean clause;
-	private final TreeNode subtree;
+	private final TreeTravelNode subtree;
 }

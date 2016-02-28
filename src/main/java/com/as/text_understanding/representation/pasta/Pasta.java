@@ -1,8 +1,11 @@
 package com.as.text_understanding.representation.pasta;
 
+import static com.as.text_understanding.TextUnderstandingUtilities.each;
+import static com.as.text_understanding.tree_util.TreeUtilities.treeToYield;
+import static com.as.text_understanding.tree_util.TreeUtilities.yieldToString;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -11,6 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
+import com.as.text_understanding.TextUnderstandingException;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 
@@ -24,7 +28,13 @@ import com.as.text_understanding.tree_travel.TreeTravelNode;
 public class Pasta
 {
 	public static Set<String> ARGUMENT_PHRASE_SYMBOLS = new LinkedHashSet<>(Arrays.asList(new String[]{"NP", "PP", "ADJP", "ADVP"}));
-	
+
+	public Pasta(TreeTravelNode root)
+	{
+		super();
+		this.root = root;
+	}
+
 	public void annotate()
 	{
 		alreadyHandled = new LinkedHashSet<>();
@@ -39,6 +49,31 @@ public class Pasta
 			process(next);
 		}
 	}
+	
+	public List<PredicateAndArguments> getResult()
+	{
+		return result;
+	}
+
+
+
+
+	public static String pasResultToString(final List<PredicateAndArguments> pasResult)
+	{
+		StringBuilder sb = new StringBuilder();
+		for (final PredicateAndArguments predicateAndArguments : pasResult)
+		{
+			if (!isTerminal(predicateAndArguments.getPredicate().getVerbNode())) {throw new TextUnderstandingException("verb node is a non-terminal");}
+			final String verbWord = predicateAndArguments.getPredicate().getVerbNode().getItself().getItem().getTerminal().getToken();
+			sb.append(verbWord).append("\n");
+			for (final Argument argument : predicateAndArguments.getArguments())
+			{
+				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(")").append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
+			}
+		}
+		return sb.toString();
+	}
+
 	
 	private void process(TreeTravelNode node)
 	{
@@ -228,6 +263,208 @@ public class Pasta
 	}
 	
 	
+	
+	private void handleRRC(TreeTravelNode node)
+	{
+		TreeTravelNode childVP = null;
+		ArrayList<TreeTravelNode> children = node.getChildren();
+		for (TreeTravelNode child : children)
+		{
+			TreeItem childItem = child.getItself().getItem();
+			if (!isTerminal(child))
+			{
+				if (childItem.getSymbol().equals("VP"))
+				{
+					childVP = child;
+					break;
+				}
+			}
+		}
+		
+		if (childVP != null)
+		{
+			TreeTravelNode sibling = node.getImmediateNonTerminalPredecessorSibling();
+			TreeTravelNode argumentNode = findArgumentInNodeItself(sibling);
+			if (argumentNode!=null)
+			{
+				addArgumentToDetectedArguments(childVP, new Argument(ArgumentType.SUBJECT, false, argumentNode));
+			}
+		}
+	}
+	
+	
+	
+	private void handleSBAR(TreeTravelNode node)
+	{
+		boolean containsWH_P = false;
+		for (TreeTravelNode child : node.getChildren())
+		{
+			if (!isTerminal(child))
+			{
+				final String childSymbol = child.getItself().getItem().getSymbol();
+				if ( childSymbol.startsWith("WH") && childSymbol.endsWith("P") )
+				{
+					containsWH_P=true;
+					break;
+				}
+			}
+		}
+		
+		if (containsWH_P)
+		{
+			TreeTravelNode vpDescendant = node.getFirstDescendant("VP", false, true, false);
+			if (vpDescendant!=null)
+			{
+				TreeTravelNode subjectNode = null;
+				subjectNode = node.getLastPredecessorSibling("NP");
+				if (subjectNode==null)
+				{
+					subjectNode = node.getLastPredecessorSibling("PP");
+				}
+				if (subjectNode!=null)
+				{
+					subjectNode = findArgumentInNodeItself(subjectNode);
+					if (subjectNode==null) { throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly."); }
+					addArgumentToDetectedArguments(vpDescendant, new Argument(ArgumentType.SUBJECT, false, subjectNode) );
+				}
+			}
+		}
+	}
+	
+	
+	private LinkedList<Argument> mergeArgumentLists(final List<Argument> highPriorityList, final List<Argument> lowPriorityList)
+	{
+		LinkedList<Argument> ret = new LinkedList<>();
+		if (highPriorityList!=null)
+		{
+			ret.addAll(highPriorityList);
+		}
+		LinkedHashSet<TreeTravelNode> highPriorityNodes = new LinkedHashSet<>();
+		if (highPriorityList!=null)
+		{
+			for (Argument argument : highPriorityList)
+			{
+				highPriorityNodes.add(argument.getSubtree());
+			}
+		}
+
+		boolean subjectAlreadyExists=false;
+		if (highPriorityList!=null)
+		{
+			for (Argument argument : highPriorityList)
+			{
+				if (argument.getType()==ArgumentType.SUBJECT)
+				{
+					subjectAlreadyExists=true;
+					break;
+				}
+			}
+		}
+
+		if (lowPriorityList!=null)
+		{
+			for (final Argument argument : lowPriorityList)
+			{
+				if (!highPriorityNodes.contains(argument.getSubtree())) // it does not exist in the other list.
+				{
+					if (subjectAlreadyExists && (argument.getType()==ArgumentType.SUBJECT) )
+					{
+						ret.add(new Argument(ArgumentType.OBJECT, argument.isClause(), argument.getSubtree()));
+					}
+					else
+					{
+						ret.add(argument);
+					}
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	
+	private Argument buildArgument(final TreeTravelNode argumentRoot, ArgumentType typeIfNP_PP_S)
+	{
+		TreeTravelNode argumentNode = argumentRoot;
+		if (argumentRoot.getItself().getItem().getSymbol().equals("PP"))
+		{
+			argumentNode = findArgumentInNodeItself(argumentRoot);
+			if (argumentNode==null) {throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly.");}
+		}
+		ArgumentType type = typeIfNP_PP_S;
+		final String argumentSymbol = argumentRoot.getItself().getItem().getSymbol();
+		// argumentSymbol.size() should not be 0, but, to be on the safe side I add this check
+		if ( (argumentSymbol.length()==0) || ( (!argumentSymbol.equals("NP")) && (!argumentSymbol.equals("PP")) && (!argumentSymbol.startsWith("S")) ) )
+		{
+			type = ArgumentType.MODIFIER;
+		}
+		boolean clause = (argumentSymbol.length()>0) && (argumentSymbol.startsWith("S"));
+		return new Argument(type, clause, argumentNode);
+	}
+	
+	
+	
+	private void findPas(TreeTravelNode node)
+	{
+		LinkedList<Argument> arguments = new LinkedList<>();
+		Set<TreeTravelNode> actualVPs = findActualVerbsVP(node);
+
+		TreeTravelNode subject = findSubject(node);
+		if (subject!=null)
+		{
+			TreeTravelNode argumentNode = subject;
+			if (subject.getItself().getItem().getSymbol().equals("PP"))
+			{
+				argumentNode = findArgumentInNodeItself(subject);
+				if (argumentNode==null) {throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly.");}
+			}
+			arguments.add(new Argument(ArgumentType.SUBJECT, false, argumentNode));
+		}
+		
+		List<TreeTravelNode> siblingArguments = findSiblingArguments(node);
+		for (TreeTravelNode siblingArgument : siblingArguments)
+		{
+			if ( (subject==null) || (subject!=siblingArgument) ) // = if this is not the subject (that was added earlier)
+			{
+				arguments.add(buildArgument(siblingArgument, ArgumentType.OBJECT));
+			}
+		}
+
+		for (TreeTravelNode actualVP : actualVPs)
+		{
+			TreeTravelNode verbNode = actualVP.getFirstDescendant("V", true, false, true);
+			if (verbNode!=null)
+			{
+				LinkedList<Argument> actualArguments = new LinkedList<>();
+				actualArguments.addAll(arguments);
+				
+				List<TreeTravelNode> inVpArguments = findInVPArguments(actualVP);
+				for (TreeTravelNode inVpArgumentNode : inVpArguments)
+				{
+					actualArguments.add(buildArgument(inVpArgumentNode, ArgumentType.OBJECT));
+				}
+				
+				if (mapDetectedArguments.containsKey(actualVP))
+				{
+					actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
+				}
+				if (mapDetectedArguments.containsKey(node))
+				{
+					actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
+				}
+				
+				Predicate predicate = new Predicate(actualVP, verbNode);
+				ArrayList<Argument> argumentsVector = new ArrayList<>(actualArguments.size());
+				argumentsVector.addAll(actualArguments);
+				PredicateAndArguments predicateAndArguments = new PredicateAndArguments(predicate, argumentsVector);
+				result.add(predicateAndArguments);
+			}
+			alreadyHandled.add(actualVP);
+		}
+		
+		alreadyHandled.add(node);
+	}
+	
 
 	
 	
@@ -238,17 +475,6 @@ public class Pasta
 		return node.getItself().getItem().isTerminal();
 	}
 	
-	private static <T> Iterable<T> each(Iterable<T> originalIterable)
-	{
-		if (originalIterable==null)
-		{
-			return Collections.emptyList();
-		}
-		else
-		{
-			return originalIterable;
-		}
-	}
 
 	
 	private final TreeTravelNode root;

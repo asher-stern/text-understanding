@@ -1,6 +1,6 @@
 package com.as.text_understanding.representation.pasta;
 
-import com.as.text_understanding.representation.tree.TreeNode;
+import com.as.text_understanding.tree_travel.TreeTravelNode;
 
 /**
  * 
@@ -11,7 +11,7 @@ import com.as.text_understanding.representation.tree.TreeNode;
  */
 public class Predicate
 {
-	public Predicate(TreeNode subtree, TreeNode verbNode)
+	public Predicate(TreeTravelNode subtree, TreeTravelNode verbNode)
 	{
 		super();
 		this.subtree = subtree;
@@ -20,17 +20,17 @@ public class Predicate
 	
 	
 	
-	public TreeNode getSubtree()
+	public TreeTravelNode getSubtree()
 	{
 		return subtree;
 	}
-	public TreeNode getVerbNode()
+	public TreeTravelNode getVerbNode()
 	{
 		return verbNode;
 	}
 
 
 
-	private final TreeNode subtree;
-	private final TreeNode verbNode;
+	private final TreeTravelNode subtree;
+	private final TreeTravelNode verbNode;
 }
