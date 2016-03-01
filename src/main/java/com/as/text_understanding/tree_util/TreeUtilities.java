@@ -1,5 +1,6 @@
 package com.as.text_understanding.tree_util;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -52,6 +53,32 @@ public class TreeUtilities
 				sb.append(" ");
 			}
 			sb.append(terminal.getToken());
+		}
+		return sb.toString();
+	}
+	
+	public static String treeToString(final Tree tree)
+	{
+		return treeToString(tree.getRoot(),0);
+	}
+	
+	private static String treeToString(final TreeNode node, final int indentation)
+	{
+		StringBuilder sb = new StringBuilder();
+		char[] spaces = new char[indentation];
+		Arrays.fill(spaces, ' ');
+		sb.append(new String(spaces));
+		if (node.getItem().isTerminal())
+		{
+			sb.append(node.getItem().getTerminal().getToken()).append("\n");
+		}
+		else
+		{
+			sb.append(node.getItem().getSymbol()).append("\n");
+			for (TreeNode child : node.getChildren())
+			{
+				sb.append(treeToString(child, indentation+1));
+			}
 		}
 		return sb.toString();
 	}
