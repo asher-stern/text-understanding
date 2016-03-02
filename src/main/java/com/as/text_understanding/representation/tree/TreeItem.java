@@ -11,16 +11,18 @@ public class TreeItem
 {
 	public TreeItem(Terminal terminal)
 	{
-		super();
-		this.terminal = terminal;
-		this.symbol = null;
+		this(terminal,null);
 	}
 	
 	public TreeItem(String symbol)
 	{
-		super();
-		this.terminal = null;
-		this.symbol = symbol;
+		this(null, symbol);
+	}
+	
+	public void setBeginEnd(int begin, int end)
+	{
+		this.begin = begin;
+		this.end = end;
 	}
 	
 	public Terminal getTerminal()
@@ -39,6 +41,17 @@ public class TreeItem
 	}
 	
 	
+	public int getBegin()
+	{
+		return begin;
+	}
+
+	public int getEnd()
+	{
+		return end;
+	}
+
+	
 	
 	protected TreeItem(Terminal terminal, String symbol)
 	{
@@ -46,6 +59,10 @@ public class TreeItem
 		this.terminal = terminal;
 		this.symbol = symbol;
 	}
+	
 	private final Terminal terminal;
 	private final String symbol;
+	
+	private int begin;
+	private int end;
 }

@@ -60,7 +60,9 @@ public class TreeBuilderFromDkpro
 				Token token = (Token)childFS;
 				String tag = token.getPos().getPosValue();
 				String tokenString = token.getCoveredText();
-				children.add( new TreeNode(new TreeItem(new Terminal(tokenString, tag)), null) );
+				TreeItem item = new TreeItem(new Terminal(tokenString, tag));
+				item.setBeginEnd(token.getBegin(), token.getEnd());
+				children.add( new TreeNode(item, null) );
 			}
 			else
 			{
@@ -69,7 +71,9 @@ public class TreeBuilderFromDkpro
 		}
 		
 		final String symbol = treeRoot.getClass().getSimpleName();
-		return new TreeNode(new TreeItem(symbol),children);
+		TreeItem item = new TreeItem(symbol);
+		item.setBeginEnd(treeRoot.getBegin(), treeRoot.getEnd());
+		return new TreeNode(item, children);
 	}
 	
 	private Constituent findRoot()

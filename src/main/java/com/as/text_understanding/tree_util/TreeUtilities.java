@@ -59,7 +59,12 @@ public class TreeUtilities
 	
 	public static String treeToString(final Tree tree)
 	{
-		return treeToString(tree.getRoot(),0);
+		return treeToString(tree.getRoot());
+	}
+	
+	public static String treeToString(final TreeNode node)
+	{
+		return treeToString(node, 0);
 	}
 	
 	private static String treeToString(final TreeNode node, final int indentation)
@@ -70,7 +75,7 @@ public class TreeUtilities
 		sb.append(new String(spaces));
 		if (node.getItem().isTerminal())
 		{
-			sb.append(node.getItem().getTerminal().getToken()).append("\n");
+			sb.append(node.getItem().getTerminal().getToken()).append("/").append(node.getItem().getTerminal().getTag()).append("\n");
 		}
 		else
 		{

@@ -1,5 +1,17 @@
 package com.as.text_understanding.tree_util;
 
+import static com.as.text_understanding.common.JUnitUtilities.assertListStartsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.uima.UIMAException;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
+import org.apache.uima.fit.factory.JCasFactory;
+import org.apache.uima.fit.pipeline.SimplePipeline;
+import org.apache.uima.jcas.JCas;
 import org.junit.Test;
 
 import com.as.text_understanding.representation.tree.Tree;
@@ -8,19 +20,6 @@ import com.as.text_understanding.representation.tree.TreeNode;
 
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
-
-import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.function.Function;
-
-import org.apache.uima.UIMAException;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
-import org.apache.uima.fit.factory.JCasFactory;
-import org.apache.uima.fit.pipeline.SimplePipeline;
-import org.apache.uima.jcas.JCas;
 
 /**
  * 
@@ -35,18 +34,7 @@ public class TestTreeBuilderFromDkpro
 	public void testTreeBuilder() throws UIMAException
 	{
 		final String sentence = "This small example shows you how to write a unit test.";
-		JCas cas = JCasFactory.createJCas();
-		cas.setDocumentLanguage("en");
-		cas.setDocumentText(sentence);
-		
-		SimplePipeline.runPipeline(cas, 
-				AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
-				AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class)
-				);
-		
-		TreeBuilderFromDkpro builder = new TreeBuilderFromDkpro(cas);
-		builder.build();
-		Tree tree = builder.getTree();
+		Tree tree = buildTreeFromSentence(sentence);
 		String treeString = TreeUtilities.treeToString(tree);
 		System.out.println(treeString);
 		
@@ -60,20 +48,27 @@ public class TestTreeBuilderFromDkpro
 		assertListStartsWith(expected, topChildren, (TreeNode t)->t.getItem().getSymbol());
 	}
 	
-	private static <T,R> void assertListStartsWith(List<T> expected, List<T> actual, Function<T, R> function)
+	public static Tree buildTreeFromSentence(final String sentence) throws UIMAException
 	{
-		Iterator<T> expectedIterator = expected.iterator();
-		Iterator<T> actualIterator = actual.iterator();
-		while (expectedIterator.hasNext())
+		JCas cas = JCasFactory.createJCas();
+		try
 		{
-			assertTrue("Actual to short", actualIterator.hasNext());
-			if (actualIterator.hasNext())
-			{
-				T expectedItem = expectedIterator.next();
-				T actualItem = actualIterator.next();
-				assertEquals("Item mismatch",function.apply(expectedItem), function.apply(actualItem));
-			}
+			cas.setDocumentLanguage("en");
+			cas.setDocumentText(sentence);
+
+			SimplePipeline.runPipeline(cas, 
+					AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
+					AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class)
+					);
+
+			TreeBuilderFromDkpro builder = new TreeBuilderFromDkpro(cas);
+			builder.build();
+			Tree tree = builder.getTree();
+			return tree;
+		}
+		finally
+		{
+			cas.release();
 		}
 	}
-	
 }

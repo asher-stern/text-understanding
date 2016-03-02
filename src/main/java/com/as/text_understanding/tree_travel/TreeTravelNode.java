@@ -23,37 +23,7 @@ public class TreeTravelNode
 		return createFromTree(root, 0, new MutableInt(0));
 	}
 	
-	public static TreeTravelNode createFromTree(TreeNode root, int index, MutableInt terminalIndex)
-	{
-		final int originalTerminalIndex = terminalIndex.getValue();
-		TreeTravelNode generatedRoot = new TreeTravelNode(root, index, terminalIndex.getValue());
-		if (root.getChildren()!=null)
-		{
-			int childrenIndex=0;
-			ArrayList<TreeTravelNode> children = new ArrayList<>(root.getChildren().size());
-			for (TreeNode rawChild : root.getChildren())
-			{
-				TreeTravelNode generatedChild = createFromTree(rawChild, childrenIndex, terminalIndex);
-				generatedChild.setParent(generatedRoot);
-				children.add(generatedChild);
-				++childrenIndex;
-			}
-			generatedRoot.setChildren(children);
-		}
-		else
-		{
-			generatedRoot.setChildren(null); // Not necessary. just making it explicit.
-		}
-		generatedRoot.setParent(null); // Again, just to make it explicit. In most cases (except the root) this will be overwritten by the caller.
-		
-		if (root.getItem().isTerminal())
-		{
-			terminalIndex.increment();
-		}
-		generatedRoot.setNumberOfCoveredTerminals(terminalIndex.getValue()-originalTerminalIndex);
-		
-		return generatedRoot;
-	}
+
 	
 	public TreeTravelNode(TreeNode itself, int index, int terminalIndex)
 	{
@@ -224,7 +194,7 @@ public class TreeTravelNode
 			ArrayList<TreeTravelNode> ret = new ArrayList<>(children.size());
 			for (TreeTravelNode child : children)
 			{
-				if (child.getItself().getItem().isTerminal())
+				if (!child.getItself().getItem().isTerminal())
 				{
 					ret.add(child);
 				}
@@ -285,7 +255,37 @@ public class TreeTravelNode
 	}
 
 
-
+	private static TreeTravelNode createFromTree(TreeNode root, int index, MutableInt terminalIndex)
+	{
+		final int originalTerminalIndex = terminalIndex.getValue();
+		TreeTravelNode generatedRoot = new TreeTravelNode(root, index, terminalIndex.getValue());
+		if (root.getChildren()!=null)
+		{
+			int childrenIndex=0;
+			ArrayList<TreeTravelNode> children = new ArrayList<>(root.getChildren().size());
+			for (TreeNode rawChild : root.getChildren())
+			{
+				TreeTravelNode generatedChild = createFromTree(rawChild, childrenIndex, terminalIndex);
+				generatedChild.setParent(generatedRoot);
+				children.add(generatedChild);
+				++childrenIndex;
+			}
+			generatedRoot.setChildren(children);
+		}
+		else
+		{
+			generatedRoot.setChildren(null); // Not necessary. just making it explicit.
+		}
+		generatedRoot.setParent(null); // Again, just to make it explicit. In most cases (except the root) this will be overwritten by the caller.
+		
+		if (root.getItem().isTerminal())
+		{
+			terminalIndex.increment();
+		}
+		generatedRoot.setNumberOfCoveredTerminals(terminalIndex.getValue()-originalTerminalIndex);
+		
+		return generatedRoot;
+	}
 
 
 

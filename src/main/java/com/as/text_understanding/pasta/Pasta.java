@@ -1,4 +1,4 @@
-package com.as.text_understanding.representation.pasta;
+package com.as.text_understanding.pasta;
 
 import static com.as.text_understanding.TextUnderstandingUtilities.each;
 import static com.as.text_understanding.tree_util.TreeUtilities.treeToYield;
@@ -15,6 +15,10 @@ import java.util.Queue;
 import java.util.Set;
 
 import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.representation.pasta.Argument;
+import com.as.text_understanding.representation.pasta.ArgumentType;
+import com.as.text_understanding.representation.pasta.Predicate;
+import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 
@@ -68,7 +72,7 @@ public class Pasta
 			sb.append(verbWord).append("\n");
 			for (final Argument argument : predicateAndArguments.getArguments())
 			{
-				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(")").append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
+				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(") ").append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
 			}
 		}
 		return sb.toString();
