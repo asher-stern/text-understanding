@@ -68,7 +68,8 @@ public class TreeBuilderFromDkpro
 			}
 		}
 		
-		return new TreeNode(new TreeItem(treeRoot.getSyntacticFunction()),children);
+		final String symbol = treeRoot.getClass().getSimpleName();
+		return new TreeNode(new TreeItem(symbol),children);
 	}
 	
 	private Constituent findRoot()
