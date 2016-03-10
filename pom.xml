@@ -13,6 +13,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <dkpro.core.version>1.7.0</dkpro.core.version>
+    <jena-version>3.0.1</jena-version>
   </properties>
 
   <build>
@@ -58,13 +59,27 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
       <version>3.4</version>
-  </dependency>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+    </dependency>
+
+   <dependency>
+     <groupId>org.apache.jena</groupId>
+     <artifactId>apache-jena-libs</artifactId>
+     <type>pom</type>
+     <version>${jena-version}</version>
+   </dependency>
+
   
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <!--  <version>3.8.1</version> -->
-      <scope>test</scope>
+      <!-- <scope>test</scope> -->
     </dependency>
   </dependencies>
 </project>
