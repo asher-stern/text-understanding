@@ -13,7 +13,9 @@ import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 
 /**
- * 
+ * TODO Change the implementation to return the nodes themselves, rather than indexes.
+ * TODO List.get() is used by this class.
+ *  
  *
  * Date: Mar 10, 2016
  * @author asher
@@ -21,18 +23,27 @@ import com.as.text_understanding.representation.tree.TreeNode;
  */
 public class HeadFinder
 {
-	public int findHead(TreeNode treeNode)
+	public static int findHead(TreeNode treeNode)
 	{
 		return templatedFindHead(treeItemTagExtractor.apply(treeNode.getItem()), treeNode.getChildren(), treeNodeTagExtractor);
 	}
 
-	public int findHead(String lhsTag, List<TreeItem> items)
+	public static int findHead(String lhsTag, List<TreeItem> items)
 	{
 		return templatedFindHead(lhsTag, items, treeItemTagExtractor);
 	}
+	
+	public static TreeNode findTerminalHead(TreeNode treeNode)
+	{
+		if (treeNode.getItem().isTerminal()) {return treeNode;}
+		int childHeadIndex = findHead(treeNode);
+		List<TreeNode> children = treeNode.getChildren();
+		if (childHeadIndex >= children.size()) {throw new TextUnderstandingException("Wrong head index has been returned from findHead()");}
+		return findTerminalHead(children.get(childHeadIndex));
+	}
 
 	
-	private <T> int scanLeftToRight(List<T> items, List<String> prioritizedTags, Function<T, String> tagExtractor)
+	private static <T> int scanLeftToRight(List<T> items, List<String> prioritizedTags, Function<T, String> tagExtractor)
 	{
 		int size = items.size();
 		if (size==0) throw new TextUnderstandingException("empty vector of items");
@@ -52,7 +63,7 @@ public class HeadFinder
 		return 0;
 	}
 
-	private <T> int scanRightToLeft(List<T> items, List<String> prioritizedTags, Function<T,String> tagExtractor)
+	private static <T> int scanRightToLeft(List<T> items, List<String> prioritizedTags, Function<T,String> tagExtractor)
 	{
 		final int size = items.size();
 		if (size==0) throw new TextUnderstandingException("empty vector of items");
@@ -74,7 +85,7 @@ public class HeadFinder
 	
 	
 	
-	private <T> boolean scanOptionalSetLeftToRight(List<T> items, Set<String> tags, Function<T, String> tagExtractor, MutableInt index)
+	private static <T> boolean scanOptionalSetLeftToRight(List<T> items, Set<String> tags, Function<T, String> tagExtractor, MutableInt index)
 	{
 		final int size = items.size();
 		Iterator<T> itemIterator = items.iterator();
@@ -93,7 +104,7 @@ public class HeadFinder
 
 
 	
-	private <T> boolean scanOptionalSetRightToLeft(List<T> items, Set<String> tags, Function<T, String> tagExtractor, MutableInt index)
+	private static <T> boolean scanOptionalSetRightToLeft(List<T> items, Set<String> tags, Function<T, String> tagExtractor, MutableInt index)
 	{
 		final int size = items.size();
 		ListIterator<T> itemIterator = items.listIterator(size);
@@ -112,7 +123,7 @@ public class HeadFinder
 	
 	
 	
-	private <T> int findHeadOfNP(String lhsTag, List<T> items, Function<T, String> tagExtractor)
+	private static <T> int findHeadOfNP(String lhsTag, List<T> items, Function<T, String> tagExtractor)
 	{
 		final int size = items.size();
 		int headIndex = 0;
@@ -161,7 +172,7 @@ public class HeadFinder
 		return headIndex;
 	}
 	
-	private <T> int templatedFindHead(String lhsTag, List<T> items, Function<T, String> tagExtractor)
+	private static <T> int templatedFindHead(String lhsTag, List<T> items, Function<T, String> tagExtractor)
 	{
 		if (lhsTag.equals("NP"))
 		{

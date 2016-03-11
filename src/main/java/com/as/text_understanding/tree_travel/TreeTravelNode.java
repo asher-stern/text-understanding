@@ -149,7 +149,7 @@ public class TreeTravelNode
 		ArrayList<TreeTravelNode> siblings = getAllSiblings();
 		if (siblings!=null)
 		{
-			for (int siblingIndex=index-1; siblingIndex<=0; --siblingIndex)
+			for (int siblingIndex=index-1; siblingIndex>=0; --siblingIndex)
 			{
 				TreeItem item = siblings.get(siblingIndex).getItself().getItem();
 				if (!item.isTerminal())

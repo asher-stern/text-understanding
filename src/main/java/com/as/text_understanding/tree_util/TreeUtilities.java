@@ -67,6 +67,11 @@ public class TreeUtilities
 		return treeToString(node, 0);
 	}
 	
+	public static String treeToElegantString(final TreeNode node)
+	{
+		return treeToElegantString(node, new boolean[0]);
+	}
+	
 	private static String treeToString(final TreeNode node, final int indentation)
 	{
 		StringBuilder sb = new StringBuilder();
@@ -88,5 +93,47 @@ public class TreeUtilities
 		return sb.toString();
 	}
 
+	private static String treeToElegantString(final TreeNode node, boolean[] ancestors)
+	{
+		StringBuilder sb = new StringBuilder();
+		for (int index=0; index<ancestors.length; ++index)
+		{
+			if (index<(ancestors.length-1))
+			{
+				if (ancestors[index]==true)
+				{
+					sb.append("| ");
+				}
+				else
+				{
+					sb.append("  ");
+				}
+			}
+			else
+			{
+				sb.append("+-");
+			}
+		}
+		
+		if (node.getItem().isTerminal())
+		{
+			sb.append(node.getItem().getTerminal().getToken()).append("/").append(node.getItem().getTerminal().getTag()).append("\n");
+		}
+		else
+		{
+			sb.append(node.getItem().getSymbol()).append("\n");
+			
+			final int numberOfChildren = node.getChildren().size();
+			int childIndex=1;
+			for (TreeNode child : node.getChildren())
+			{
+				boolean[] childAncestors = Arrays.copyOf(ancestors, ancestors.length+1);
+				childAncestors[ancestors.length] = (childIndex<numberOfChildren);
+				sb.append(treeToElegantString(child, childAncestors));
+				++childIndex;
+			}
+		}
+		return sb.toString();
+	}
 
 }

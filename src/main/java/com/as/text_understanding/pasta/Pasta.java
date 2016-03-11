@@ -20,7 +20,9 @@ import com.as.text_understanding.representation.pasta.ArgumentType;
 import com.as.text_understanding.representation.pasta.Predicate;
 import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.TreeItem;
+import com.as.text_understanding.representation.tree.TreeNode;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
+import com.as.text_understanding.tree_util.head.HeadFinder;
 
 /**
  * 
@@ -64,6 +66,10 @@ public class Pasta
 
 	public static String pasResultToString(final List<PredicateAndArguments> pasResult)
 	{
+		return pasResultToString(pasResult, false);
+	}
+	public static String pasResultToString(final List<PredicateAndArguments> pasResult, boolean printHead)
+	{
 		StringBuilder sb = new StringBuilder();
 		for (final PredicateAndArguments predicateAndArguments : pasResult)
 		{
@@ -72,7 +78,14 @@ public class Pasta
 			sb.append(verbWord).append("\n");
 			for (final Argument argument : predicateAndArguments.getArguments())
 			{
-				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(") ").append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
+				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(") ");
+				if (printHead)
+				{
+					TreeNode headNode = HeadFinder.findTerminalHead(argument.getSubtree().getItself());
+					final String head = headNode.getItem().getTerminal().getToken();
+					sb.append(head).append(": ");
+				}
+				sb.append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
 			}
 		}
 		return sb.toString();
@@ -424,7 +437,7 @@ public class Pasta
 			}
 			arguments.add(new Argument(ArgumentType.SUBJECT, false, argumentNode));
 		}
-		
+
 		List<TreeTravelNode> siblingArguments = findSiblingArguments(node);
 		for (TreeTravelNode siblingArgument : siblingArguments)
 		{
@@ -436,36 +449,39 @@ public class Pasta
 
 		for (TreeTravelNode actualVP : actualVPs)
 		{
-			TreeTravelNode verbNode = actualVP.getFirstDescendant("V", true, false, true);
-			if (verbNode!=null)
+			if (!alreadyHandled.contains(actualVP))
 			{
-				LinkedList<Argument> actualArguments = new LinkedList<>();
-				actualArguments.addAll(arguments);
-				
-				List<TreeTravelNode> inVpArguments = findInVPArguments(actualVP);
-				for (TreeTravelNode inVpArgumentNode : inVpArguments)
+				TreeTravelNode verbNode = actualVP.getFirstDescendant("V", true, false, true);
+				if (verbNode!=null)
 				{
-					actualArguments.add(buildArgument(inVpArgumentNode, ArgumentType.OBJECT));
+					LinkedList<Argument> actualArguments = new LinkedList<>();
+					actualArguments.addAll(arguments);
+
+					List<TreeTravelNode> inVpArguments = findInVPArguments(actualVP);
+					for (TreeTravelNode inVpArgumentNode : inVpArguments)
+					{
+						actualArguments.add(buildArgument(inVpArgumentNode, ArgumentType.OBJECT));
+					}
+
+					if (mapDetectedArguments.containsKey(actualVP))
+					{
+						actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
+					}
+					if (mapDetectedArguments.containsKey(node))
+					{
+						actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
+					}
+
+					Predicate predicate = new Predicate(actualVP, verbNode);
+					ArrayList<Argument> argumentsVector = new ArrayList<>(actualArguments.size());
+					argumentsVector.addAll(actualArguments);
+					PredicateAndArguments predicateAndArguments = new PredicateAndArguments(predicate, argumentsVector);
+					result.add(predicateAndArguments);
 				}
-				
-				if (mapDetectedArguments.containsKey(actualVP))
-				{
-					actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
-				}
-				if (mapDetectedArguments.containsKey(node))
-				{
-					actualArguments = mergeArgumentLists(mapDetectedArguments.get(node), actualArguments);
-				}
-				
-				Predicate predicate = new Predicate(actualVP, verbNode);
-				ArrayList<Argument> argumentsVector = new ArrayList<>(actualArguments.size());
-				argumentsVector.addAll(actualArguments);
-				PredicateAndArguments predicateAndArguments = new PredicateAndArguments(predicate, argumentsVector);
-				result.add(predicateAndArguments);
+				alreadyHandled.add(actualVP);
 			}
-			alreadyHandled.add(actualVP);
 		}
-		
+
 		alreadyHandled.add(node);
 	}
 	
@@ -487,4 +503,7 @@ public class Pasta
 	private Map<TreeTravelNode, List<Argument>> mapDetectedArguments; // map from a VP to its arguments that were detected earlier.
 	private List<PredicateAndArguments> result;
 	private Queue<TreeTravelNode> bfsQueue;
+	
+	@SuppressWarnings("unused")
+	private static final org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(Pasta.class);
 }
