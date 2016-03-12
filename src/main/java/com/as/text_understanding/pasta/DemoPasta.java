@@ -76,7 +76,7 @@ public class DemoPasta
 				System.out.println();
 				System.out.println(TreeUtilities.treeToElegantString(tree.getRoot()));
 //				System.out.println(TreeUtilities.treeToString(tree));
-				System.out.println(Pasta.pasResultToString(pasResult, true));
+				System.out.println(Pasta.pasResultToString(pasResult, false, true));
 				
 				System.out.println();
 				cas.reset();

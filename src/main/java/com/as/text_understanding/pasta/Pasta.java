@@ -22,6 +22,7 @@ import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
+import com.as.text_understanding.tree_util.concept.ConceptFinder;
 import com.as.text_understanding.tree_util.head.HeadFinder;
 
 /**
@@ -66,9 +67,10 @@ public class Pasta
 
 	public static String pasResultToString(final List<PredicateAndArguments> pasResult)
 	{
-		return pasResultToString(pasResult, false);
+		return pasResultToString(pasResult, false, false);
 	}
-	public static String pasResultToString(final List<PredicateAndArguments> pasResult, boolean printHead)
+	
+	public static String pasResultToString(final List<PredicateAndArguments> pasResult, boolean printHead, boolean printConcept)
 	{
 		StringBuilder sb = new StringBuilder();
 		for (final PredicateAndArguments predicateAndArguments : pasResult)
@@ -84,6 +86,11 @@ public class Pasta
 					TreeNode headNode = HeadFinder.findTerminalHead(argument.getSubtree().getItself());
 					final String head = headNode.getItem().getTerminal().getToken();
 					sb.append(head).append(": ");
+				}
+				if (printConcept)
+				{
+					ConceptFinder conceptFinder = new ConceptFinder();
+					sb.append(ConceptFinder.conceptsToString(conceptFinder.findConcepts(argument.getSubtree()))).append(": ");
 				}
 				sb.append(yieldToString(treeToYield(argument.getSubtree().getItself()))).append("\n");
 			}
