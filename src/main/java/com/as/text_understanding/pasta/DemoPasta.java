@@ -59,7 +59,7 @@ public class DemoPasta
 			while (true)
 			{
 				System.out.println("Please enter a sentence");
-				String sentence = reader.readLine();
+				String sentence = reader.readLine().trim();
 				if ("exit".equals(sentence)) break;
 				cas.setDocumentLanguage("en");
 				cas.setDocumentText(sentence);
