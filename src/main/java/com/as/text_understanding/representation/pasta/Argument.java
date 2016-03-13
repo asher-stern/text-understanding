@@ -1,5 +1,7 @@
 package com.as.text_understanding.representation.pasta;
 
+import java.util.List;
+
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 
 /**
@@ -16,7 +18,7 @@ public class Argument
 		this(type,clause,null,subtree);
 	}
 	
-	public Argument(ArgumentType type, boolean clause, TreeTravelNode preposition, TreeTravelNode subtree)
+	public Argument(ArgumentType type, boolean clause, List<TreeTravelNode> preposition, TreeTravelNode subtree)
 	{
 		super();
 		this.type = type;
@@ -34,7 +36,7 @@ public class Argument
 	{
 		return clause;
 	}
-	public TreeTravelNode getPreposition()
+	public List<TreeTravelNode> getPreposition()
 	{
 		return preposition;
 	}
@@ -48,6 +50,6 @@ public class Argument
 
 	private final ArgumentType type;
 	private final boolean clause;
-	private final TreeTravelNode preposition;
+	private final List<TreeTravelNode> preposition;
 	private final TreeTravelNode subtree;
 }

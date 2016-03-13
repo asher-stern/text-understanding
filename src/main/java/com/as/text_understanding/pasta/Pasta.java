@@ -22,6 +22,7 @@ import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
+import com.as.text_understanding.tree_util.TreeUtilities;
 import com.as.text_understanding.tree_util.concept.ConceptFinder;
 import com.as.text_understanding.tree_util.head.HeadFinder;
 
@@ -183,8 +184,12 @@ public class Pasta
 	// TODO what about "S", "SINV", etc. ?
 	TreeTravelNode findSubject(TreeTravelNode vpNode)
 	{
-		TreeTravelNode ret = vpNode.getFirstSibling("NP");
-		if (ret==null)
+		TreeTravelNode ret = vpNode.getLastPredecessorSibling("NP");
+		if (null==ret)
+		{
+			ret = vpNode.getFirstSibling("NP");
+		}
+		if (null==ret)
 		{
 			ret = vpNode.getFirstSibling("PP");
 		}
@@ -416,7 +421,7 @@ public class Pasta
 	private Argument buildArgument(final TreeTravelNode argumentRoot, ArgumentType typeIfNP_PP_S)
 	{
 		TreeTravelNode argumentNode = argumentRoot;
-		TreeTravelNode preposition = null;
+		List<TreeTravelNode> preposition = null;
 		if (argumentRoot.getItself().getItem().getSymbol().equals("PP"))
 		{
 			argumentNode = findArgumentInNodeItself(argumentRoot);
@@ -434,14 +439,28 @@ public class Pasta
 		return new Argument(type, clause, preposition, argumentNode);
 	}
 	
-	private TreeTravelNode findPreposition(final TreeTravelNode prepositionPhrase)
+	private List<TreeTravelNode> findPreposition(final TreeTravelNode prepositionPhrase)
 	{
 		ArrayList<TreeTravelNode> children = prepositionPhrase.getChildren();
-		if (children.size()>1)
+		List<TreeTravelNode> ret = new LinkedList<>();
+		int index=0;
+		for (TreeTravelNode child : children)
 		{
-			return children.get(0);
+			if ( (index+1)==children.size() )
+			{
+				break;
+			}
+			if (!child.getItself().getItem().isTerminal())
+			{
+				if (child.getItself().getItem().getSymbol().equals("NP"))
+				{
+					break;
+				}
+			}
+			ret.add(child);
+			++index;
 		}
-		return null;
+		return ret;
 	}
 	
 	
@@ -523,9 +542,49 @@ public class Pasta
 	
 	private static final String printPreposition(TreeTravelNode prepositionNode)
 	{
-		if (!prepositionNode.getItself().getItem().isTerminal()) {throw new TextUnderstandingException("Unexpected non-terminal node for preposition.");}
-		return prepositionNode.getItself().getItem().getTerminal().getToken();
+		return TreeUtilities.yieldToString(TreeUtilities.treeToYield(prepositionNode.getItself()));
 	}
+	
+	private static final String printPreposition(List<TreeTravelNode> prepositionNodes)
+	{
+		StringBuilder sb = new StringBuilder();
+		boolean firstIteration = true;
+		for (TreeTravelNode node : prepositionNodes)
+		{
+			if (firstIteration){firstIteration=false;} else {sb.append(" ");}
+			sb.append(printPreposition(node));
+		}
+		return sb.toString();
+	}
+//	private static final String printPreposition(TreeTravelNode prepositionNode)
+//	{
+//		System.out.println(prepositionNode.getIndex());
+//		System.out.println(prepositionNode.getItself().getItem().getSymbol());
+//		ArrayList<TreeTravelNode> children = prepositionNode.getChildren();
+//		StringBuilder sb = new StringBuilder();
+//		boolean firstIteration = true;
+//		int index = 0;
+//		for (TreeTravelNode child : children)
+//		{
+//			if ( (index+1) >= children.size() )
+//			{
+//				break;
+//			}
+//			TreeItem childItem = child.getItself().getItem();
+//			if (!childItem.isTerminal())
+//			{
+//				if (childItem.getSymbol().equals("NP"))
+//					break;
+//			}
+//			if (firstIteration) {firstIteration=false;}
+//			else {sb.append(" ");}
+//			sb.append(TreeUtilities.yieldToString(TreeUtilities.treeToYield(child.getItself())));
+//			
+//			++index;
+//		}
+//		
+//		return sb.toString();
+//	}
 	
 
 	
