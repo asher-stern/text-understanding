@@ -81,13 +81,17 @@ public class Pasta
 			for (final Argument argument : predicateAndArguments.getArguments())
 			{
 				sb.append("\t").append(argument.isClause()?" (c)":"").append(" (").append(argument.getType().name()).append(") ");
+				if (argument.getPreposition()!=null)
+				{
+					sb.append("<").append(printPreposition(argument.getPreposition())).append("> ");
+				}
 				if (printHead)
 				{
 					TreeNode headNode = HeadFinder.findTerminalHead(argument.getSubtree().getItself());
 					final String head = headNode.getItem().getTerminal().getToken();
 					sb.append(head).append(": ");
 				}
-				if (printConcept)
+				if (printConcept && (!argument.isClause()))
 				{
 					ConceptFinder conceptFinder = new ConceptFinder();
 					sb.append(ConceptFinder.conceptsToString(conceptFinder.findConcepts(argument.getSubtree()))).append(": ");
@@ -311,7 +315,8 @@ public class Pasta
 			TreeTravelNode argumentNode = findArgumentInNodeItself(sibling);
 			if (argumentNode!=null)
 			{
-				addArgumentToDetectedArguments(childVP, new Argument(ArgumentType.SUBJECT, false, argumentNode));
+//				addArgumentToDetectedArguments(childVP, new Argument(ArgumentType.SUBJECT, false, argumentNode));
+				addArgumentToDetectedArguments(childVP, buildArgument(sibling, ArgumentType.SUBJECT) ); // buildArgument on the sibling will find again argumentNode, which is not null.
 			}
 		}
 	}
@@ -347,9 +352,10 @@ public class Pasta
 				}
 				if (subjectNode!=null)
 				{
-					subjectNode = findArgumentInNodeItself(subjectNode);
-					if (subjectNode==null) { throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly."); }
-					addArgumentToDetectedArguments(vpDescendant, new Argument(ArgumentType.SUBJECT, false, subjectNode) );
+//					subjectNode = findArgumentInNodeItself(subjectNode);
+//					if (subjectNode==null) { throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly."); }
+//					addArgumentToDetectedArguments(vpDescendant, new Argument(ArgumentType.SUBJECT, false, subjectNode) );
+					addArgumentToDetectedArguments(vpDescendant, buildArgument(subjectNode, ArgumentType.SUBJECT) );
 				}
 			}
 		}
@@ -410,10 +416,12 @@ public class Pasta
 	private Argument buildArgument(final TreeTravelNode argumentRoot, ArgumentType typeIfNP_PP_S)
 	{
 		TreeTravelNode argumentNode = argumentRoot;
+		TreeTravelNode preposition = null;
 		if (argumentRoot.getItself().getItem().getSymbol().equals("PP"))
 		{
 			argumentNode = findArgumentInNodeItself(argumentRoot);
 			if (argumentNode==null) {throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly.");}
+			preposition = findPreposition(argumentRoot);
 		}
 		ArgumentType type = typeIfNP_PP_S;
 		final String argumentSymbol = argumentRoot.getItself().getItem().getSymbol();
@@ -423,7 +431,17 @@ public class Pasta
 			type = ArgumentType.MODIFIER;
 		}
 		boolean clause = (argumentSymbol.length()>0) && (argumentSymbol.startsWith("S"));
-		return new Argument(type, clause, argumentNode);
+		return new Argument(type, clause, preposition, argumentNode);
+	}
+	
+	private TreeTravelNode findPreposition(final TreeTravelNode prepositionPhrase)
+	{
+		ArrayList<TreeTravelNode> children = prepositionPhrase.getChildren();
+		if (children.size()>1)
+		{
+			return children.get(0);
+		}
+		return null;
 	}
 	
 	
@@ -436,13 +454,14 @@ public class Pasta
 		TreeTravelNode subject = findSubject(node);
 		if (subject!=null)
 		{
-			TreeTravelNode argumentNode = subject;
-			if (subject.getItself().getItem().getSymbol().equals("PP"))
-			{
-				argumentNode = findArgumentInNodeItself(subject);
-				if (argumentNode==null) {throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly.");}
-			}
-			arguments.add(new Argument(ArgumentType.SUBJECT, false, argumentNode));
+//			TreeTravelNode argumentNode = subject;
+//			if (subject.getItself().getItem().getSymbol().equals("PP"))
+//			{
+//				argumentNode = findArgumentInNodeItself(subject);
+//				if (argumentNode==null) {throw new TextUnderstandingException("findArgumentInNodeItself returned nullptr unexpectedly.");}
+//			}
+//			arguments.add(new Argument(ArgumentType.SUBJECT, false, argumentNode));
+			arguments.add(buildArgument(subject, ArgumentType.SUBJECT));
 		}
 
 		List<TreeTravelNode> siblingArguments = findSiblingArguments(node);
@@ -500,6 +519,12 @@ public class Pasta
 	private static boolean isTerminal(TreeTravelNode node)
 	{
 		return node.getItself().getItem().isTerminal();
+	}
+	
+	private static final String printPreposition(TreeTravelNode prepositionNode)
+	{
+		if (!prepositionNode.getItself().getItem().isTerminal()) {throw new TextUnderstandingException("Unexpected non-terminal node for preposition.");}
+		return prepositionNode.getItself().getItem().getTerminal().getToken();
 	}
 	
 

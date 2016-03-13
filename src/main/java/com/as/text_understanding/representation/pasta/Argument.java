@@ -13,12 +13,17 @@ public class Argument
 {
 	public Argument(ArgumentType type, boolean clause, TreeTravelNode subtree)
 	{
+		this(type,clause,null,subtree);
+	}
+	
+	public Argument(ArgumentType type, boolean clause, TreeTravelNode preposition, TreeTravelNode subtree)
+	{
 		super();
 		this.type = type;
 		this.clause = clause;
+		this.preposition = preposition;
 		this.subtree = subtree;
 	}
-	
 	
 	
 	public ArgumentType getType()
@@ -29,6 +34,11 @@ public class Argument
 	{
 		return clause;
 	}
+	public TreeTravelNode getPreposition()
+	{
+		return preposition;
+	}
+
 	public TreeTravelNode getSubtree()
 	{
 		return subtree;
@@ -38,5 +48,6 @@ public class Argument
 
 	private final ArgumentType type;
 	private final boolean clause;
+	private final TreeTravelNode preposition;
 	private final TreeTravelNode subtree;
 }
