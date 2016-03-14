@@ -26,7 +26,7 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
  * 
  *
  * Date: Mar 11, 2016
- * @author asher
+ * @author Asher Stern
  *
  */
 public class DemoPasta

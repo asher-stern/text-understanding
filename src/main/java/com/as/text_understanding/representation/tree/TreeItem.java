@@ -1,5 +1,7 @@
 package com.as.text_understanding.representation.tree;
 
+import com.as.text_understanding.TextUnderstandingException;
+
 /**
  * 
  *
@@ -23,6 +25,7 @@ public class TreeItem
 	{
 		this.begin = begin;
 		this.end = end;
+		beginEndSet = true;
 	}
 	
 	public Terminal getTerminal()
@@ -43,11 +46,13 @@ public class TreeItem
 	
 	public int getBegin()
 	{
+		if (!beginEndSet) throw new TextUnderstandingException("Begin and End were not set.");
 		return begin;
 	}
 
 	public int getEnd()
 	{
+		if (!beginEndSet) throw new TextUnderstandingException("Begin and End were not set.");
 		return end;
 	}
 
@@ -63,6 +68,7 @@ public class TreeItem
 	private final Terminal terminal;
 	private final String symbol;
 	
+	private boolean beginEndSet = false;
 	private int begin;
 	private int end;
 }
