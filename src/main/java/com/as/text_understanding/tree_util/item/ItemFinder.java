@@ -1,4 +1,4 @@
-package com.as.text_understanding.tree_util.concept;
+package com.as.text_understanding.tree_util.item;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,15 +21,15 @@ import com.as.text_understanding.tree_travel.TreeTravelNode;
  * @author asher
  *
  */
-public class ConceptFinder
+public class ItemFinder
 {
 	public static final Set<String> CLAUSE_SYMBOLS = buildSet(new String[]{"S","SBAR","SBARQ","SINV","SQ","RRC","WHAVP","WHNP","WHPP"});
 	public static final String COORDINATION_TAG = "CC";
 	public static final Set<String> NON_CONTENT_POS_TAGS = buildSet(new String[]{"CC","DT","IN","LS","MD","SYM","TO"});
 	
-	public List<List<TreeTravelNode>> findConcepts(TreeTravelNode subtree)
+	public List<List<TreeTravelNode>> findItems(TreeTravelNode subtree)
 	{
-		List<List<TreeTravelNode>> grossConcepts = findConceptsRegardslessContent(subtree, true);
+		List<List<TreeTravelNode>> grossConcepts = findItemsRegardslessContent(subtree, true);
 		
 		List<List<TreeTravelNode>> ret = new ArrayList<>(grossConcepts.size());
 		for (List<TreeTravelNode> concept : grossConcepts)
@@ -39,7 +39,7 @@ public class ConceptFinder
 		return ret;
 	}
 	
-	public static String conceptsToString(final List<List<TreeTravelNode>> concepts)
+	public static String itemsToString(final List<List<TreeTravelNode>> concepts)
 	{
 		StringBuilder sb = new StringBuilder();
 		boolean multipleConcepts = (concepts.size()>1);
@@ -65,7 +65,7 @@ public class ConceptFinder
 		return sb.toString();
 	}
 	
-	private List<List<TreeTravelNode>> findConceptsRegardslessContent(TreeTravelNode subtree, boolean forceIncludeFirst)
+	private List<List<TreeTravelNode>> findItemsRegardslessContent(TreeTravelNode subtree, boolean forceIncludeFirst)
 	{
 		if (subtree.getItself().getItem().isTerminal())
 		{
@@ -81,27 +81,27 @@ public class ConceptFinder
 			else
 			{
 				List<List<TreeTravelNode>> ret = new LinkedList<>();
-				List<TreeTravelNode> currentConcept = new LinkedList<>();
-				ret.add(currentConcept);
+				List<TreeTravelNode> currentItem = new LinkedList<>();
+				ret.add(currentItem);
 				boolean first = true;
 				for (TreeTravelNode child : subtree.getChildren())
 				{
 					if (nodeStartsCoordination(child))
 					{
-						currentConcept = new LinkedList<>();
-						ret.add(currentConcept);
+						currentItem = new LinkedList<>();
+						ret.add(currentItem);
 					}
 					
-					List<List<TreeTravelNode>> ofChild = findConceptsRegardslessContent(child, (first&&forceIncludeFirst) );
+					List<List<TreeTravelNode>> ofChild = findItemsRegardslessContent(child, (first&&forceIncludeFirst) );
 					boolean firstConcept = true;
 					for (List<TreeTravelNode> ofChildConcept : ofChild)
 					{
 						if (!firstConcept)
 						{
-							currentConcept = new LinkedList<>();
-							ret.add(currentConcept);
+							currentItem = new LinkedList<>();
+							ret.add(currentItem);
 						}
-						currentConcept.addAll(ofChildConcept);
+						currentItem.addAll(ofChildConcept);
 						firstConcept = false;
 					}
 					first = false;
