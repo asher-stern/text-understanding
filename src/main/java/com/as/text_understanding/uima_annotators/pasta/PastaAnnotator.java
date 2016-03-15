@@ -3,11 +3,16 @@ package com.as.text_understanding.uima_annotators.pasta;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
+import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
+import org.apache.uima.tools.docanalyzer.DocumentAnalyzer;
 
 import com.as.text_understanding.TextUnderstandingException;
 import com.as.text_understanding.pasta.Pasta;
@@ -16,11 +21,8 @@ import com.as.text_understanding.representation.pasta.ArgumentType;
 import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
-import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
 import com.as.text_understanding.tree_util.item.ItemFinder;
 import com.as.text_understanding.uima_typesystem.pasta.ArgumentItem;
-
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 
 
 
@@ -33,10 +35,38 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
  */
 public abstract class PastaAnnotator extends JCasAnnotator_ImplBase
 {
+	public static void main(String[] args)
+	{
+		try
+		{
+			SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer();
+					documentAnalyzer.setVisible(true);
+				}
+			});
+			
+//			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
+//			desc.toXML(System.out);
+		}
+		catch(Throwable t)
+		{
+			t.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException
 	{
-		
+		List<Tree> trees = extractTreesFromCas(aJCas);
+		for (Tree tree : trees)
+		{
+			List<PredicateAndArguments> pases = findPredicateAndArguments(aJCas, tree);
+			pasResultToCas(aJCas, pases);
+		}
 	}
 
 	protected abstract List<Tree> extractTreesFromCas(JCas aJCas);

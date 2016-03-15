@@ -2,15 +2,11 @@ package com.as.text_understanding.uima_annotators.pasta;
 
 import java.util.List;
 
+import org.apache.uima.fit.descriptor.TypeCapability;
 import org.apache.uima.jcas.JCas;
 
-import com.as.text_understanding.pasta.Pasta;
-import com.as.text_understanding.representation.pasta.PredicateAndArguments;
 import com.as.text_understanding.representation.tree.Tree;
-import com.as.text_understanding.tree_travel.TreeTravelNode;
 import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
-
-import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 
 
 /**
@@ -20,15 +16,27 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
  * @author Asher Stern
  *
  */
+
+@TypeCapability(
+	    inputs = {
+			    "com.as.text_understanding.uima_typesystem.pasta.Argument",
+			    "com.as.text_understanding.uima_typesystem.pasta.ArgumentItem",
+			    "com.as.text_understanding.uima_typesystem.pasta.ArgumentType",
+			    "com.as.text_understanding.uima_typesystem.pasta.Modifier",
+			    "com.as.text_understanding.uima_typesystem.pasta.Object",
+			    "com.as.text_understanding.uima_typesystem.pasta.Predicate",
+			    "com.as.text_understanding.uima_typesystem.pasta.PredicateAndArguments",
+			    "com.as.text_understanding.uima_typesystem.pasta.Subject",
+			    "com.as.text_understanding.uima_typesystem.pasta.Unknown"},
+		outputs = {
+		    "de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent",
+		    "de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree"})
 public class FromDkproPastaAnnotator extends PastaAnnotator
 {
 	@Override
 	protected List<Tree> extractTreesFromCas(JCas aJCas)
 	{
-		
 		TreeBuilderFromDkpro builder = new TreeBuilderFromDkpro(aJCas);
-		builder.build();
-		Tree tree = builder.getTree();
-		return tree;
+		return builder.buildForMultiSentence();
 	}
 }

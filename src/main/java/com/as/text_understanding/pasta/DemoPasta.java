@@ -66,8 +66,7 @@ public class DemoPasta
 				System.out.println("Processing pipeline...");
 				SimplePipeline.runPipeline(cas, engines);
 				TreeBuilderFromDkpro builder = new TreeBuilderFromDkpro(cas);
-				builder.build();
-				Tree tree = builder.getTree();
+				Tree tree = builder.buildForSingleSentence();
 				TreeTravelNode treeTravel = TreeTravelNode.createFromTree(tree.getRoot());
 				System.out.println("Running Pasta...");
 				Pasta pasta = new Pasta(treeTravel);

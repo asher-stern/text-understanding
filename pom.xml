@@ -74,6 +74,10 @@
      <version>${jena-version}</version>
    </dependency>
 
+   <dependency>
+     <groupId>org.apache.uima</groupId>
+     <artifactId>uimaj-tools</artifactId>
+   </dependency>
   
     <dependency>
       <groupId>junit</groupId>

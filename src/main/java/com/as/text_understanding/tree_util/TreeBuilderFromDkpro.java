@@ -1,10 +1,12 @@
 package com.as.text_understanding.tree_util;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.uima.cas.FeatureStructure;
 import org.apache.uima.cas.text.AnnotationIndex;
+import org.apache.uima.fit.util.JCasUtil;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
@@ -15,6 +17,7 @@ import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 
+import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence;
 import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
@@ -32,14 +35,23 @@ public class TreeBuilderFromDkpro
 		super();
 		this.cas = cas;
 	}
-	public void build()
+	
+	public Tree buildForSingleSentence()
 	{
-		tree = new Tree(build(findRoot()));
+		return new Tree(build(findRoot()));
 	}
-	public Tree getTree()
+	
+	public List<Tree> buildForMultiSentence()
 	{
-		return tree;
+		List<Constituent> rootConstituents = findRootsForAllSentences();
+		List<Tree> ret = new ArrayList<>(rootConstituents.size());
+		for (Constituent constituent : rootConstituents)
+		{
+			ret.add( new Tree(build(constituent)) );
+		}
+		return ret;
 	}
+
 
 
 	private TreeNode build(Constituent treeRoot)
@@ -76,6 +88,29 @@ public class TreeBuilderFromDkpro
 		return new TreeNode(item, children);
 	}
 	
+	private List<Constituent> findRootsForAllSentences()
+	{
+		List<Constituent> ret = new LinkedList<>();
+		
+		JCasUtil.indexCovered(cas, Sentence.class, Constituent.class);
+		
+		for (Annotation sentenceAnnotation : cas.getAnnotationIndex(Sentence.type))
+		{
+			Sentence sentence = (Sentence) sentenceAnnotation;
+			List<Constituent> coveredConstituents = JCasUtil.selectCovered(cas, Constituent.class, sentence);
+			for (Constituent constituent : coveredConstituents)
+			{
+				if ( (constituent.getBegin()==sentence.getBegin()) && (constituent.getEnd()==sentence.getEnd()) )
+				{
+					ret.add(constituent);
+					break;
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
 	private Constituent findRoot()
 	{
 		final int length = cas.getDocumentText().length();
@@ -96,7 +131,4 @@ public class TreeBuilderFromDkpro
 
 	// input
 	private final JCas cas;
-	
-	// output
-	private Tree tree;
 }

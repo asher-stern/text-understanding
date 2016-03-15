@@ -62,8 +62,7 @@ public class TestTreeBuilderFromDkpro
 					);
 
 			TreeBuilderFromDkpro builder = new TreeBuilderFromDkpro(cas);
-			builder.build();
-			Tree tree = builder.getTree();
+			Tree tree = builder.buildForSingleSentence();
 			return tree;
 		}
 		finally
