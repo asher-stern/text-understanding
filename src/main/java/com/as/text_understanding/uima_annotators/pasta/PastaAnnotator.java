@@ -1,8 +1,10 @@
 package com.as.text_understanding.uima_annotators.pasta;
 
+import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import org.apache.uima.analysis_engine.AnalysisEngineDescription;
@@ -15,6 +17,7 @@ import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.tools.docanalyzer.DocumentAnalyzer;
 
 import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.LogInit;
 import com.as.text_understanding.pasta.Pasta;
 import com.as.text_understanding.representation.pasta.Argument;
 import com.as.text_understanding.representation.pasta.ArgumentType;
@@ -23,6 +26,9 @@ import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 import com.as.text_understanding.tree_util.item.ItemFinder;
 import com.as.text_understanding.uima_typesystem.pasta.ArgumentItem;
+
+import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
+import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 
 
@@ -33,21 +39,41 @@ import com.as.text_understanding.uima_typesystem.pasta.ArgumentItem;
  * @author Asher Stern
  *
  */
+
 public abstract class PastaAnnotator extends JCasAnnotator_ImplBase
 {
 	public static void main(String[] args)
 	{
 		try
 		{
+			LogInit.init();
+
+			AnalysisEngineDescription pastaDesc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
+			
+			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(
+					AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
+					AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class),
+					pastaDesc
+					);
+			desc.getAnalysisEngineMetaData().setCapabilities(pastaDesc.getAnalysisEngineMetaData().getCapabilities());
+			
+			desc.toXML(new FileOutputStream("/home/asher/data/temp/desc.xml"));
+			
+			Thread.sleep(1000);
+			
 			SwingUtilities.invokeLater(new Runnable()
 			{
 				@Override
 				public void run()
 				{
 					DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer();
+					documentAnalyzer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					documentAnalyzer.pack();
 					documentAnalyzer.setVisible(true);
 				}
 			});
+
+			
 			
 //			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
 //			desc.toXML(System.out);
@@ -110,63 +136,68 @@ public abstract class PastaAnnotator extends JCasAnnotator_ImplBase
 			uimaPredicate.addToIndexes();
 			
 			uimaPredicateAndArguments.setPredicate(uimaPredicate);
-			
-			int argumentIndex = 0;
-			for (Argument argument : predArgs.getArguments())
+
+
+			if (predArgs.getArguments()!=null)
 			{
-				com.as.text_understanding.uima_typesystem.pasta.Argument uimaArgument = new com.as.text_understanding.uima_typesystem.pasta.Argument(aJcas);
-				int argumentBegin = argument.getSubtree().getItself().getItem().getBegin();
-				int argumentEnd = argument.getSubtree().getItself().getItem().getEnd();
-				predArgsBegin = Math.min(predArgsBegin, argumentBegin);
-				predArgsEnd = Math.max(predArgsEnd, argumentEnd);
-				uimaArgument.setBegin(argumentBegin);
-				uimaArgument.setEnd(argumentEnd);
-				uimaArgument.addToIndexes();
-				uimaArgument.setClause(argument.isClause());
-				
-				uimaArgument.setArgumentType(createUimaArgumentType(argument.getType(), aJcas));
-				
-				LinkedList<ArgumentItem> listArgumentItems = new LinkedList<>();
-				ItemFinder itemFinder = new ItemFinder();
-				List<List<TreeTravelNode>> items = itemFinder.findItems(argument.getSubtree());
-				for (List<TreeTravelNode> item : items)
+				uimaPredicateAndArguments.setArguments(new FSArray(aJcas, predArgs.getArguments().size()));
+				int argumentIndex = 0;
+				for (Argument argument : predArgs.getArguments())
 				{
-					if (!item.isEmpty())
+					com.as.text_understanding.uima_typesystem.pasta.Argument uimaArgument = new com.as.text_understanding.uima_typesystem.pasta.Argument(aJcas);
+					int argumentBegin = argument.getSubtree().getItself().getItem().getBegin();
+					int argumentEnd = argument.getSubtree().getItself().getItem().getEnd();
+					predArgsBegin = Math.min(predArgsBegin, argumentBegin);
+					predArgsEnd = Math.max(predArgsEnd, argumentEnd);
+					uimaArgument.setBegin(argumentBegin);
+					uimaArgument.setEnd(argumentEnd);
+					uimaArgument.addToIndexes();
+					uimaArgument.setClause(argument.isClause());
+
+					uimaArgument.setArgumentType(createUimaArgumentType(argument.getType(), aJcas));
+
+					LinkedList<ArgumentItem> listArgumentItems = new LinkedList<>();
+					ItemFinder itemFinder = new ItemFinder();
+					List<List<TreeTravelNode>> items = itemFinder.findItems(argument.getSubtree());
+					for (List<TreeTravelNode> item : items)
 					{
-						int itemBegin = item.get(0).getItself().getItem().getBegin();
-						int itemEnd = item.get(item.size()-1).getItself().getItem().getEnd();
-						if (itemBegin>=itemEnd) throw new TextUnderstandingException("Anomaly: item end preceds begin.");
-						ArgumentItem argumentItem = new ArgumentItem(aJcas);
-						argumentItem.setBegin(itemBegin);
-						argumentItem.setEnd(itemEnd);
-						argumentItem.addToIndexes();
-						listArgumentItems.add(argumentItem);
+						if (!item.isEmpty())
+						{
+							int itemBegin = item.get(0).getItself().getItem().getBegin();
+							int itemEnd = item.get(item.size()-1).getItself().getItem().getEnd();
+							if (itemBegin>=itemEnd) throw new TextUnderstandingException("Anomaly: item end preceds begin.");
+							ArgumentItem argumentItem = new ArgumentItem(aJcas);
+							argumentItem.setBegin(itemBegin);
+							argumentItem.setEnd(itemEnd);
+							argumentItem.addToIndexes();
+							listArgumentItems.add(argumentItem);
+						}
 					}
-				}
-				FSArray argumentItemArray = new FSArray(aJcas, listArgumentItems.size());
-				int itemIndex=0;
-				for (ArgumentItem argumentItem : listArgumentItems)
-				{
-					argumentItemArray.set(itemIndex, argumentItem);
-					++itemIndex;
-				}
-				uimaArgument.setItems(argumentItemArray);
-				if (argument.getPreposition()!=null)
-				{
-					int prepositionIndex=0;
-					for (TreeTravelNode preposition : argument.getPreposition())
+					FSArray argumentItemArray = new FSArray(aJcas, listArgumentItems.size());
+					int itemIndex=0;
+					for (ArgumentItem argumentItem : listArgumentItems)
 					{
-						Annotation prepositionAnnotation = new Annotation(aJcas);
-						prepositionAnnotation.setBegin(preposition.getItself().getItem().getBegin());
-						prepositionAnnotation.setEnd(preposition.getItself().getItem().getEnd());
-						prepositionAnnotation.addToIndexes();
-						uimaArgument.setPrepositions(prepositionIndex, prepositionAnnotation);
-						++prepositionIndex;
+						argumentItemArray.set(itemIndex, argumentItem);
+						++itemIndex;
 					}
+					uimaArgument.setItems(argumentItemArray);
+					if (argument.getPreposition()!=null)
+					{
+						int prepositionIndex=0;
+						for (TreeTravelNode preposition : argument.getPreposition())
+						{
+							Annotation prepositionAnnotation = new Annotation(aJcas);
+							prepositionAnnotation.setBegin(preposition.getItself().getItem().getBegin());
+							prepositionAnnotation.setEnd(preposition.getItself().getItem().getEnd());
+							prepositionAnnotation.addToIndexes();
+							uimaArgument.setPrepositions(prepositionIndex, prepositionAnnotation);
+							++prepositionIndex;
+						}
+					}
+					uimaPredicateAndArguments.setArguments(argumentIndex, uimaArgument);
+
+					++argumentIndex;
 				}
-				uimaPredicateAndArguments.setArguments(argumentIndex, uimaArgument);
-				
-				++argumentIndex;
 			}
 			uimaPredicateAndArguments.setBegin(predArgsBegin);
 			uimaPredicateAndArguments.setEnd(predArgsEnd);

@@ -18,19 +18,19 @@ import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
  */
 
 @TypeCapability(
-	    inputs = {
-			    "com.as.text_understanding.uima_typesystem.pasta.Argument",
-			    "com.as.text_understanding.uima_typesystem.pasta.ArgumentItem",
-			    "com.as.text_understanding.uima_typesystem.pasta.ArgumentType",
-			    "com.as.text_understanding.uima_typesystem.pasta.Modifier",
-			    "com.as.text_understanding.uima_typesystem.pasta.Object",
-			    "com.as.text_understanding.uima_typesystem.pasta.Predicate",
-			    "com.as.text_understanding.uima_typesystem.pasta.PredicateAndArguments",
-			    "com.as.text_understanding.uima_typesystem.pasta.Subject",
-			    "com.as.text_understanding.uima_typesystem.pasta.Unknown"},
+		inputs = {
+				"de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent",
+		"de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree"},
 		outputs = {
-		    "de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent",
-		    "de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree"})
+				"com.as.text_understanding.uima_typesystem.pasta.Argument",
+				"com.as.text_understanding.uima_typesystem.pasta.ArgumentItem",
+				"com.as.text_understanding.uima_typesystem.pasta.ArgumentType",
+				"com.as.text_understanding.uima_typesystem.pasta.Modifier",
+				"com.as.text_understanding.uima_typesystem.pasta.Object",
+				"com.as.text_understanding.uima_typesystem.pasta.Predicate",
+				"com.as.text_understanding.uima_typesystem.pasta.PredicateAndArguments",
+				"com.as.text_understanding.uima_typesystem.pasta.Subject",
+		"com.as.text_understanding.uima_typesystem.pasta.Unknown"})
 public class FromDkproPastaAnnotator extends PastaAnnotator
 {
 	@Override
