@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 import org.apache.commons.lang3.mutable.MutableInt;
 
-import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 

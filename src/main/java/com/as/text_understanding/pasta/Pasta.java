@@ -1,6 +1,6 @@
 package com.as.text_understanding.pasta;
 
-import static com.as.text_understanding.TextUnderstandingUtilities.each;
+import static com.as.text_understanding.common.TextUnderstandingUtilities.each;
 import static com.as.text_understanding.tree_util.TreeUtilities.treeToYield;
 import static com.as.text_understanding.tree_util.TreeUtilities.yieldToString;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
-import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.representation.pasta.Argument;
 import com.as.text_understanding.representation.pasta.ArgumentType;
 import com.as.text_understanding.representation.pasta.Predicate;

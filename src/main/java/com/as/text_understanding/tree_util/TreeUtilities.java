@@ -1,5 +1,7 @@
 package com.as.text_understanding.tree_util;
 
+import static com.as.text_understanding.common.TextUnderstandingUtilities.each;
+
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -7,8 +9,6 @@ import java.util.List;
 import com.as.text_understanding.representation.tree.Terminal;
 import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.representation.tree.TreeNode;
-
-import static com.as.text_understanding.TextUnderstandingUtilities.each;
 
 /**
  * 

@@ -16,8 +16,8 @@ import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 import org.apache.uima.tools.docanalyzer.DocumentAnalyzer;
 
-import com.as.text_understanding.TextUnderstandingException;
 import com.as.text_understanding.common.LogInit;
+import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.pasta.Pasta;
 import com.as.text_understanding.representation.pasta.Argument;
 import com.as.text_understanding.representation.pasta.ArgumentType;

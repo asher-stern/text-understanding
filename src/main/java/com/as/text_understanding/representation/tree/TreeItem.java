@@ -1,6 +1,6 @@
 package com.as.text_understanding.representation.tree;
 
-import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.TextUnderstandingException;
 
 /**
  * 

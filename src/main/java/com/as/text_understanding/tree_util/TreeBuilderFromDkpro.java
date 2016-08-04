@@ -11,7 +11,7 @@ import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
 
-import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.representation.tree.Terminal;
 import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.representation.tree.TreeItem;

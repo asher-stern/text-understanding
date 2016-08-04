@@ -1,9 +1,10 @@
-package com.as.text_understanding;
+package com.as.text_understanding.common;
 
 
 /**
+ * Base exception for exceptions thrown by methods in this project.
  * 
- *
+ * <br/><br/>
  * Date: Feb 24, 2016
  * @author Asher Stern
  *

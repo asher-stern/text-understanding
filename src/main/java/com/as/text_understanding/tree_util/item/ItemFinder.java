@@ -9,7 +9,7 @@ import java.util.ListIterator;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import com.as.text_understanding.TextUnderstandingException;
+import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.representation.tree.Terminal;
 import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
