@@ -27,14 +27,20 @@ import com.as.text_understanding.tree_util.head.HeadFinder;
 import com.as.text_understanding.tree_util.item.ItemFinder;
 
 /**
+ * This class gets a tree as an input (as a {@link TreeTravelNode}), and produces a list of {@link PredicateAndArguments} that
+ * resembles the predicate-argument structures expressed by that tree.
+ * <br/>
+ * Note that this class has nothing to do with UIMA, and in particular does not operate over UIMA objects.
  * 
- *
+ * <br/><br/>
  * Date: Feb 24, 2016
  * @author Asher Stern
  *
  */
 public class Pasta
 {
+	//////////////////// PUBLIC ////////////////////
+	
 	public static Set<String> ARGUMENT_PHRASE_SYMBOLS = new LinkedHashSet<>(Arrays.asList(new String[]{"NP", "PP", "ADJP", "ADVP"}));
 
 	public Pasta(TreeTravelNode root)
@@ -103,6 +109,8 @@ public class Pasta
 		return sb.toString();
 	}
 
+
+	//////////////////// PRIVATE ////////////////////
 	
 	private void process(TreeTravelNode node)
 	{
