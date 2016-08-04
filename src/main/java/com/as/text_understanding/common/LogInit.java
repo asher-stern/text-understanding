@@ -8,8 +8,10 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 /**
- * 
+ * Initializes log4j either from a log4j.properties file in the current directory, or by applying a simple default initialization,
+ * if that file does not exist.
  *
+ * <br/><br/>
  * Date: Mar 9, 2016
  * @author asher
  *
