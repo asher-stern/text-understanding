@@ -64,8 +64,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-    
     </dependencies>
   </dependencyManagement>
 
@@ -100,5 +98,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
+    
   </dependencies>
+  
 </project>
