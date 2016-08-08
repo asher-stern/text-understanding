@@ -1,22 +1,14 @@
 package com.as.text_understanding.uima_annotators.pasta;
 
-import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import org.apache.uima.analysis_engine.AnalysisEngineDescription;
 import org.apache.uima.analysis_engine.AnalysisEngineProcessException;
 import org.apache.uima.fit.component.JCasAnnotator_ImplBase;
-import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.jcas.JCas;
 import org.apache.uima.jcas.cas.FSArray;
 import org.apache.uima.jcas.tcas.Annotation;
-import org.apache.uima.tools.docanalyzer.DocumentAnalyzer;
 
-import com.as.text_understanding.common.LogInit;
 import com.as.text_understanding.common.TextUnderstandingException;
 import com.as.text_understanding.pasta.Pasta;
 import com.as.text_understanding.representation.pasta.Argument;
@@ -26,9 +18,6 @@ import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 import com.as.text_understanding.tree_util.item.ItemFinder;
 import com.as.text_understanding.uima_typesystem.pasta.ArgumentItem;
-
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 
 
@@ -42,47 +31,7 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 public abstract class PastaAnnotator extends JCasAnnotator_ImplBase
 {
-	public static void main(String[] args)
-	{
-		try
-		{
-			LogInit.init();
 
-			AnalysisEngineDescription pastaDesc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
-			
-			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(
-					AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
-					AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class),
-					pastaDesc
-					);
-			desc.getAnalysisEngineMetaData().setCapabilities(pastaDesc.getAnalysisEngineMetaData().getCapabilities());
-			
-			desc.toXML(new FileOutputStream("/home/asher/data/temp/desc.xml"));
-			
-			Thread.sleep(1000);
-			
-			SwingUtilities.invokeLater(new Runnable()
-			{
-				@Override
-				public void run()
-				{
-					DocumentAnalyzer documentAnalyzer = new DocumentAnalyzer();
-					documentAnalyzer.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-					documentAnalyzer.pack();
-					documentAnalyzer.setVisible(true);
-				}
-			});
-
-			
-			
-//			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
-//			desc.toXML(System.out);
-		}
-		catch(Throwable t)
-		{
-			t.printStackTrace();
-		}
-	}
 	
 	@Override
 	public void process(JCas aJCas) throws AnalysisEngineProcessException
