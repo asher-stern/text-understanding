@@ -183,15 +183,19 @@ public abstract class PastaAnnotator extends JCasAnnotator_ImplBase
 					uimaArgument.setItems(argumentItemArray);
 					if (argument.getPreposition()!=null)
 					{
-						int prepositionIndex=0;
-						for (TreeTravelNode preposition : argument.getPreposition())
+						if (argument.getPreposition().size()>0)
 						{
-							Annotation prepositionAnnotation = new Annotation(aJcas);
-							prepositionAnnotation.setBegin(preposition.getItself().getItem().getBegin());
-							prepositionAnnotation.setEnd(preposition.getItself().getItem().getEnd());
-							prepositionAnnotation.addToIndexes();
-							uimaArgument.setPrepositions(prepositionIndex, prepositionAnnotation);
-							++prepositionIndex;
+							uimaArgument.setPrepositions(new FSArray(aJcas, argument.getPreposition().size()));
+							int prepositionIndex=0;
+							for (TreeTravelNode preposition : argument.getPreposition())
+							{
+								Annotation prepositionAnnotation = new Annotation(aJcas);
+								prepositionAnnotation.setBegin(preposition.getItself().getItem().getBegin());
+								prepositionAnnotation.setEnd(preposition.getItself().getItem().getEnd());
+								prepositionAnnotation.addToIndexes();
+								uimaArgument.setPrepositions(prepositionIndex, prepositionAnnotation);
+								++prepositionIndex;
+							}
 						}
 					}
 					uimaPredicateAndArguments.setArguments(argumentIndex, uimaArgument);
