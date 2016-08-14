@@ -3,6 +3,9 @@ package com.as.text_understanding.pasta;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.uima.UIMAException;
 import org.junit.Test;
 
@@ -25,6 +28,9 @@ public class TestPasta
 	@Test
 	public void testPasta() throws UIMAException
 	{
+		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.WARN);
+		
 		final String sentence = "This small example shows you how to write a unit test.";
 		Tree tree = TestTreeBuilderFromDkpro.buildTreeFromSentence(sentence);
 		TreeTravelNode treeTravel = TreeTravelNode.createFromTree(tree.getRoot());

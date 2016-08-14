@@ -7,6 +7,9 @@ import static org.junit.Assert.assertFalse;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.uima.UIMAException;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.JCasFactory;
@@ -33,6 +36,9 @@ public class TestTreeBuilderFromDkpro
 	@Test
 	public void testTreeBuilder() throws UIMAException
 	{
+		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.WARN);
+		
 		final String sentence = "This small example shows you how to write a unit test.";
 		Tree tree = buildTreeFromSentence(sentence);
 		String treeString = TreeUtilities.treeToString(tree);
