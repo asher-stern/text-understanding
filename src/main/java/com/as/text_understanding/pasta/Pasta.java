@@ -25,12 +25,21 @@ import com.as.text_understanding.tree_travel.TreeTravelNode;
 import com.as.text_understanding.tree_util.TreeUtilities;
 import com.as.text_understanding.tree_util.head.HeadFinder;
 import com.as.text_understanding.tree_util.item.ItemFinder;
+import com.as.text_understanding.uima_annotators.pasta.DemoPastaAnnotator;
+import com.as.text_understanding.uima_annotators.pasta.FromDkproPastaAnnotator;
+import com.as.text_understanding.uima_annotators.pasta.PastaAnnotator;
 
 /**
  * This class gets a tree as an input (as a {@link TreeTravelNode}), and produces a list of {@link PredicateAndArguments} that
  * resembles the predicate-argument structures expressed by that tree.
  * <br/>
  * Note that this class has nothing to do with UIMA, and in particular does not operate over UIMA objects.
+ * <p>
+ * Usage: Use the constructor with the tree, then call {@link #annotate()}, then call {@link #getResult()} to get the PASTA result.
+ * <br/>
+ * How to create a tree? use a parser. One option is to use a parser from DKPro UIMA annotators and convert the input into a tree
+ * in the form of {@link TreeTravelNode}. An example of that can be found at {@link FromDkproPastaAnnotator} (See {@link DemoPastaAnnotator},
+ * {@link FromDkproPastaAnnotator}, {@link PastaAnnotator}). 
  * 
  * <br/><br/>
  * Date: Feb 24, 2016

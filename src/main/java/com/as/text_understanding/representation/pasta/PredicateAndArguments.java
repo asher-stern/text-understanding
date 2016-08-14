@@ -3,7 +3,9 @@ package com.as.text_understanding.representation.pasta;
 import java.util.List;
 
 /**
- * 
+ * Encapsulates a predicate and its arguments.
+ * Note that in one sentence there might be several {@link PredicateAndArguments}. Thus the PASTA result of a single sentence is
+ * a list of {@link PredicateAndArguments}.
  *
  * Date: Feb 24, 2016
  * @author Asher Stern

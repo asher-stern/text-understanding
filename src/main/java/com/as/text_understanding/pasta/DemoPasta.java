@@ -23,8 +23,11 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 /**
+ * An executable Java program that runs PASTA on sentences given from the standard input.
+ * The program parses the sentences (using DKPro UIMA annotators) and then runs PASTA to extract predicate-argument structures from
+ * the syntactic analysis (the parsing output). The PASTA result is printed in a human readable form.
  * 
- *
+ * <p>
  * Date: Mar 11, 2016
  * @author Asher Stern
  *

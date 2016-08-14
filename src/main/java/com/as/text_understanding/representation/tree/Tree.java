@@ -2,8 +2,9 @@ package com.as.text_understanding.representation.tree;
 
 
 /**
- * 
+ * Represents a constituency parse-tree.
  *
+ * <br/>
  * Date: Feb 24, 2016
  * @author Asher Stern
  *

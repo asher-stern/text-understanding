@@ -10,8 +10,13 @@ import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 
 /**
- * Not immutable. Setters must be called before any usage.
- *
+ * Represents a parse-tree node, much like {@link TreeNode}, but with additional functionality to navigate to the parent, the children
+ * the descendants, the ancestors, and the siblings.
+ * <p>
+ * <b>Note: this class is not immutable.</b><br/>
+ * <b>Note: setters must be called before any usage.</b>
+ * 
+ * <br/>
  * Date: Feb 24, 2016
  * @author Asher Stern
  *

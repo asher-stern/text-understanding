@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * 
+ * Common utilities for JUnit (unit testing).
  *
  * Date: Mar 2, 2016
  * @author asher

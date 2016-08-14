@@ -3,8 +3,9 @@ package com.as.text_understanding.representation.tree;
 import java.util.List;
 
 /**
- * 
+ * Represents a tree-node in a constituency parse-tree.
  *
+ * <br/>
  * Date: Feb 24, 2016
  * @author Asher Stern
  *

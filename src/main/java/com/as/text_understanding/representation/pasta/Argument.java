@@ -5,7 +5,7 @@ import java.util.List;
 import com.as.text_understanding.tree_travel.TreeTravelNode;
 
 /**
- * 
+ * Represents a subtree in a constituency-tree that represents an argument.
  *
  * Date: Feb 24, 2016
  * @author Asher Stern
@@ -50,6 +50,10 @@ public class Argument
 
 	private final ArgumentType type;
 	private final boolean clause;
+	
+	/**
+	 * List of tree-nodes that hold prepositions that connect the argument to the predicate.
+	 */
 	private final List<TreeTravelNode> preposition;
 	private final TreeTravelNode subtree;
 }
