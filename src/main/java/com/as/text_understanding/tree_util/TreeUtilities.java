@@ -11,9 +11,12 @@ import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.representation.tree.TreeNode;
 
 /**
+ * Commons utilities (including utilities to print some human readable representation) for constituency parse trees.
  * 
- * @author Asher Stern
+ * <br/>
  * Date: 28 February 2016
+ * @author Asher Stern
+ * 
  */
 public class TreeUtilities
 {

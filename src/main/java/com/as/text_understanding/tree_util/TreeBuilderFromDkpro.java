@@ -22,6 +22,12 @@ import de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token;
 import de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent;
 
 /**
+ * Creates parse trees of type {@link Tree} for the sentences in the given CAS, assuming the CAS is annotated with syntactic analysis
+ * annotations (e.g., <code>de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent</code>).
+ * <p>
+ * Use this class after the CAS was annotated by some parser annotator of DKPro (e.g. <code>de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser</code>).
+ * <br/>
+ * Usage: Construct {@link TreeBuilderFromDkpro} with the annotated CAS, and call {@link #buildForMultiSentence()}.
  * 
  * Date: March 1, 2016
  * @author asher
@@ -36,11 +42,20 @@ public class TreeBuilderFromDkpro
 		this.cas = cas;
 	}
 	
+	/**
+	 * Creates a single tree for a CAS that contains exactly one sentence. Don't call this method for CASes that contain
+	 * more than one sentence (it will throw an exception). In any circumstances it is safer to use {@link #buildForMultiSentence()}.
+	 * @return A parse tree for the sentence in the CAS.
+	 */
 	public Tree buildForSingleSentence()
 	{
 		return new Tree(build(findRoot()));
 	}
 	
+	/**
+	 * Creates parse-trees of type {@link Tree} for all the parse-trees (all the sentences) in the CAS.
+	 * @return List of parse-trees, ordered by the order of the sentences in the CAS.
+	 */
 	public List<Tree> buildForMultiSentence()
 	{
 		List<Constituent> rootConstituents = findRootsForAllSentences();
@@ -54,6 +69,12 @@ public class TreeBuilderFromDkpro
 
 
 
+	/**
+	 * Creates a {@link TreeNode} that resembles a constituent annotated in the CAS. In other words, converts the Constituent
+	 * annotation to a tree (or subtree) of type {@link TreeNode}, including the constituent root and all its children. 
+	 * @param treeRoot
+	 * @return
+	 */
 	private TreeNode build(Constituent treeRoot)
 	{
 		FSArray childrenArray = treeRoot.getChildren();
@@ -88,6 +109,11 @@ public class TreeBuilderFromDkpro
 		return new TreeNode(item, children);
 	}
 	
+	
+	/**
+	 * Finds all the tree-root-nodes in the CAS. 
+	 * @return
+	 */
 	private List<Constituent> findRootsForAllSentences()
 	{
 		List<Constituent> ret = new LinkedList<>();

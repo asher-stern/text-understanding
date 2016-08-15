@@ -13,10 +13,23 @@ import com.as.text_understanding.representation.tree.TreeItem;
 import com.as.text_understanding.representation.tree.TreeNode;
 
 /**
+ * Finds the head item of the right-side of a context free rule. 
+ * For a context-free rule (X ::= Y_1 Y_2 Y_3 ... Y_n) this class decides which of
+ * (Y_1, Y_2, ..., Y_n) is the head of that context-free-rule.
+ * <br/>
+ * Note that context free rule is actually expressed in every parent-and-children construct of a constituency-parse-tree. So
+ * <b>this class actually finds the child that is considered the head</b>.
+ * <p>
+ * This class, and all the classes in this package, are implementation of the rules described in Michael Collins thesis Appendix A:
+ * "A Description of The Head Rules". page 238. Michael Collins, Ph.D. Dissertation, 1999. It is available in the web (download
+ * Collins parser, and find the thesis inside the downloaded tar.gz file).
+ * <p>
+ * 
  * TODO Change the implementation to return the nodes themselves, rather than indexes.
  * TODO List.get() is used by this class.
  *  
  *
+ * <p>
  * Date: Mar 10, 2016
  * @author asher
  *

@@ -15,6 +15,8 @@ import com.as.text_understanding.representation.tree.TreeNode;
  * <p>
  * <b>Note: this class is not immutable.</b><br/>
  * <b>Note: setters must be called before any usage.</b>
+ * <p>
+ * A complete tree of type {@link TreeTravelNode} can be constructed by the static method {@link #createFromTree(TreeNode)}.
  * 
  * <br/>
  * Date: Feb 24, 2016
@@ -30,6 +32,14 @@ public class TreeTravelNode
 	
 
 	
+	/**
+	 * Construct a {@link TreeTravelNode} that wraps a {@link TreeNode}.
+	 * @param itself the wrapped tree-node
+	 * @param index index of this node among its siblings. If this node is the root, or is the first child of its parent, its index
+	 * is 0. If it is the second child of its parent then the index is 1. And so on. 
+	 * @param terminalIndex An index, starting from 0, for all terminal-nodes in the tree. The first terminal (which is the first word
+	 * in the sentence) is indexed as 0. The second 1, and so on.
+	 */
 	public TreeTravelNode(TreeNode itself, int index, int terminalIndex)
 	{
 		super();
@@ -54,6 +64,11 @@ public class TreeTravelNode
 	{
 		this.children = children;
 	}
+	
+	/**
+	 * Set the number of terminal-nodes governed by this node.
+	 * @param numberOfCoveredChildren
+	 */
 	public void setNumberOfCoveredTerminals(int numberOfCoveredChildren)
 	{
 		this.numberOfCoveredTerminals = numberOfCoveredChildren;
@@ -260,6 +275,8 @@ public class TreeTravelNode
 	}
 
 
+	////////// PRIVATE //////////
+	
 	private static TreeTravelNode createFromTree(TreeNode root, int index, MutableInt terminalIndex)
 	{
 		final int originalTerminalIndex = terminalIndex.getValue();
