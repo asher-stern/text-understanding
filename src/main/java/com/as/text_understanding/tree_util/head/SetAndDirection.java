@@ -3,7 +3,8 @@ package com.as.text_understanding.tree_util.head;
 import java.util.Set;
 
 /**
- * 
+ * Encapsulates a set of strings and a {@link Direction}.
+ * Used by {@link PrioritizedTagsContainer}.
  *
  * Date: Mar 10, 2016
  * @author asher

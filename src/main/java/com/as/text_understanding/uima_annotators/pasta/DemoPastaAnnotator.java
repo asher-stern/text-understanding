@@ -16,7 +16,11 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
 import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 
 /**
- * 
+ * Activates UIMA Document Analyzer to run UIMA PASTA annotator (and all its preconditions).
+ * <br/>
+ * <b>Note that the "Predicate" annotation in the document analyzer shows a full span of the predicate subtree, which contains,
+ * in most cases, some arguments. Thus, the field "verb" of the "Predicate" annotation should be looked-at to see the
+ * actual predicate.</b> In Document Analyzer click the predicate annotation, open it in the right pane, and look for the field "verb".
  *
  * <br/><br/>
  * Date: Aug 8, 2016
@@ -26,6 +30,10 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
 public class DemoPastaAnnotator
 {
 
+	/**
+	 * Entry point
+	 * @param args a single argument of a directory in the file system (can be an empty temporary directory).
+	 */
 	public static void main(String[] args)
 	{
 		try

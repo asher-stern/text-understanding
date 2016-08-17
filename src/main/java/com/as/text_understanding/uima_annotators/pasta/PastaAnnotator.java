@@ -22,7 +22,11 @@ import com.as.text_understanding.uima_typesystem.pasta.ArgumentItem;
 
 
 /**
- * 
+ * Super class for UIMA annotators that wrap PASTA. Currently there is only one such annotator, {@link FromDkproPastaAnnotator}.
+ * <br/>
+ * This class assumes that parse-trees are annotated in the CAS. However, there is no assumption about how they are annotated,
+ * by which annotations, etc. Subclasses should provide the functionality of extracting the parse-trees from the CAS, by implementing
+ * the method {@link #extractTreesFromCas(JCas)} (so subclasses should know exactly how trees are represented in the CAS).
  *
  * Date: Mar 14, 2016
  * @author Asher Stern

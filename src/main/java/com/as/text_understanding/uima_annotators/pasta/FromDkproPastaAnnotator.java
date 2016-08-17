@@ -10,7 +10,8 @@ import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
 
 
 /**
- * 
+ * A UIMA annotator that warps PASTA, and uses DKPro parse-tree annotations to extract parse-trees from the CAS, which are the
+ * input for PASTA.
  *
  * Date: Mar 14, 2016
  * @author Asher Stern
@@ -19,8 +20,10 @@ import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
 
 @TypeCapability(
 		inputs = {
+				"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Sentence",
+				"de.tudarmstadt.ukp.dkpro.core.api.segmentation.type.Token",
 				"de.tudarmstadt.ukp.dkpro.core.api.syntax.type.constituent.Constituent",
-		"de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree"},
+				"de.tudarmstadt.ukp.dkpro.core.api.syntax.type.PennTree"},
 		outputs = {
 				"com.as.text_understanding.uima_typesystem.pasta.Argument",
 				"com.as.text_understanding.uima_typesystem.pasta.ArgumentItem",
@@ -30,7 +33,7 @@ import com.as.text_understanding.tree_util.TreeBuilderFromDkpro;
 				"com.as.text_understanding.uima_typesystem.pasta.Predicate",
 				"com.as.text_understanding.uima_typesystem.pasta.PredicateAndArguments",
 				"com.as.text_understanding.uima_typesystem.pasta.Subject",
-		"com.as.text_understanding.uima_typesystem.pasta.Unknown"})
+				"com.as.text_understanding.uima_typesystem.pasta.Unknown"})
 public class FromDkproPastaAnnotator extends PastaAnnotator
 {
 	@Override

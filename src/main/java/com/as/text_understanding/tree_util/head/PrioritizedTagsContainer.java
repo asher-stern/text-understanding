@@ -10,8 +10,26 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * This class contains the information to find the head of a right-hand-side of a syntactic rule, (X :== Y_1, Y_2, ..., Y_n).
+ * The rules are taken from Michael Collins Ph.D. thesis 1999.
+ * {@link HeadFinder} uses the information in this class.
+ * <p>
+ * Basically, for most symbols, where they appear as the left-hand-side of a syntactic-rule, the method is the same:
+ * a list of symbols (that may appear in the right-hand-side) is defined, and the method is to scan the right-hand-side until the
+ * first symbol in the list is found. If it was not found, scan right-hand-side again until the second symbol in the list is found,
+ * and so forth. The scanning direction may be from left to right or from right to left, depending on the left-hand-side symbol.
+ * Thus, for each symbol (that may appear in a left-hand-side) two pieces of information should be defined: the list and the scanning
+ * direction.
+ * <p>
+ * An exceptional case is when the left-hand-side is NP. In this case, first it is determined whether the last right-hand-side item is
+ * the symbol "POS", and if yes it is the head. If not, several passes on the right-hand-side are performed. In each pass any symbol
+ * from a predefined set of symbols is looked-for. If found, it is the head, otherwise the next pass is performed. Each pass has
+ * its set of symbols to be looked-for and a direction (left-to-right or right-to-left).
+ * <p>
+ * <b>For more information, and better explanations, it is recommended to read Appendix A in Michael Collins Ph.D. thesis.</b>
+ *  
  * 
- *
+ * <br/><br/>
  * Date: Mar 10, 2016
  * @author asher
  *
