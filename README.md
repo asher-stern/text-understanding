@@ -9,14 +9,14 @@ This software annotates predicate-argument structures of natural-language texts,
 For example, given the sentence "*I have a computer that can process natural languages.*", the software extracts the following:
 
 **have**  
-&nbsp; &nbsp; &nbsp; (SUBJECT) I: I  
-&nbsp; &nbsp; &nbsp; (OBJECT) computer: a computer that can process natural languages
+&nbsp; &nbsp; &nbsp; (SUBJECT) I  
+&nbsp; &nbsp; &nbsp; (OBJECT) computer
 
 **process**  
-&nbsp; &nbsp; &nbsp; (SUBJECT) computer: a computer  
-&nbsp; &nbsp; &nbsp; (OBJECT) natural languages: natural languages  
+&nbsp; &nbsp; &nbsp; (SUBJECT) computer  
+&nbsp; &nbsp; &nbsp; (OBJECT) natural languages  
 
-Predicate-argument structures can be thought of a shallower approach than *Semantic Role Labeling*, yet more semantically expressive than syntactic parse-trees.
+Predicate-argument structures can be thought of as a shallower approach than *Semantic Role Labeling*, yet more semantically expressive than syntactic parse-trees.
 
 Usage
 --------
