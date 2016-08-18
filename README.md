@@ -16,7 +16,7 @@ For example, given the sentence "*I have a computer that can process natural lan
 &nbsp; &nbsp; &nbsp; (SUBJECT) computer  
 &nbsp; &nbsp; &nbsp; (OBJECT) natural languages  
 
-Predicate-argument structures can be thought of a shallower approach than *Semantic Role Labeling*, yet more semantically expressive than syntactic parse-trees.
+Predicate-argument structures can be thought of as a shallower approach than *Semantic Role Labeling*, yet more semantically expressive than syntactic parse-trees.
 
 Usage
 --------
