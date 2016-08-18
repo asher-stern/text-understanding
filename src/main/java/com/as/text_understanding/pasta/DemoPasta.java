@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.apache.uima.UIMAException;
+import org.apache.uima.analysis_component.AnalysisComponent;
 import org.apache.uima.analysis_engine.AnalysisEngine;
 import org.apache.uima.fit.factory.AnalysisEngineFactory;
 import org.apache.uima.fit.factory.JCasFactory;
@@ -34,6 +35,13 @@ import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
  */
 public class DemoPasta
 {
+	@SuppressWarnings("unchecked")
+	public static final Class<? extends AnalysisComponent>[] PRECONDITION_ANNOTATORS = (Class<? extends AnalysisComponent>[]) new Class<?>[]
+	{
+		OpenNlpSegmenter.class,
+		OpenNlpParser.class
+	};
+	
 	public static void main(String[] args)
 	{
 		try
@@ -50,10 +58,11 @@ public class DemoPasta
 	
 	public static void go() throws UIMAException, IOException
 	{
-		AnalysisEngine[] engines = new AnalysisEngine[] {
-				AnalysisEngineFactory.createEngine(OpenNlpSegmenter.class),
-				AnalysisEngineFactory.createEngine(OpenNlpParser.class)
-		};
+		AnalysisEngine[] engines = new AnalysisEngine[PRECONDITION_ANNOTATORS.length];
+		for (int clsIndex=0; clsIndex<PRECONDITION_ANNOTATORS.length; ++clsIndex)
+		{
+			engines[clsIndex] = AnalysisEngineFactory.createEngine(PRECONDITION_ANNOTATORS[clsIndex]);
+		}
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 		JCas cas = JCasFactory.createJCas();

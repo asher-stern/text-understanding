@@ -12,8 +12,7 @@ import org.apache.uima.tools.docanalyzer.DocumentAnalyzer;
 
 import com.as.text_understanding.common.LogInit;
 
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpParser;
-import de.tudarmstadt.ukp.dkpro.core.opennlp.OpenNlpSegmenter;
+import static com.as.text_understanding.pasta.DemoPasta.PRECONDITION_ANNOTATORS;
 
 /**
  * Activates UIMA Document Analyzer to run UIMA PASTA annotator (and all its preconditions).
@@ -44,11 +43,16 @@ public class DemoPastaAnnotator
 
 			AnalysisEngineDescription pastaDesc = AnalysisEngineFactory.createEngineDescription(FromDkproPastaAnnotator.class);
 			
-			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(
-					AnalysisEngineFactory.createEngineDescription(OpenNlpSegmenter.class),
-					AnalysisEngineFactory.createEngineDescription(OpenNlpParser.class),
-					pastaDesc
-					);
+			
+			AnalysisEngineDescription[] aeDescriptions = new AnalysisEngineDescription[PRECONDITION_ANNOTATORS.length+1];
+			int clsIndex=0;
+			for (clsIndex=0; clsIndex<PRECONDITION_ANNOTATORS.length; ++clsIndex)
+			{
+				aeDescriptions[clsIndex] = AnalysisEngineFactory.createEngineDescription(PRECONDITION_ANNOTATORS[clsIndex]);
+			}
+			aeDescriptions[clsIndex] = pastaDesc;
+			AnalysisEngineDescription desc = AnalysisEngineFactory.createEngineDescription(aeDescriptions);
+			
 			desc.getAnalysisEngineMetaData().setCapabilities(pastaDesc.getAnalysisEngineMetaData().getCapabilities());
 			
 			desc.toXML(new FileOutputStream(new File(baseDir, "desc.xml")));
