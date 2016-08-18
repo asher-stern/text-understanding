@@ -9,6 +9,7 @@ import java.util.List;
 import com.as.text_understanding.representation.tree.Terminal;
 import com.as.text_understanding.representation.tree.Tree;
 import com.as.text_understanding.representation.tree.TreeNode;
+import com.as.text_understanding.tree_util.head.HeadFinder;
 
 /**
  * Commons utilities (including utilities to print some human readable representation) for constituency parse trees.
@@ -70,9 +71,9 @@ public class TreeUtilities
 		return treeToString(node, 0);
 	}
 	
-	public static String treeToElegantString(final TreeNode node)
+	public static String treeToElegantString(final TreeNode node, boolean printHead)
 	{
-		return treeToElegantString(node, new boolean[0]);
+		return treeToElegantString(node, new boolean[0], printHead?true:null);
 	}
 	
 	private static String treeToString(final TreeNode node, final int indentation)
@@ -96,7 +97,7 @@ public class TreeUtilities
 		return sb.toString();
 	}
 
-	private static String treeToElegantString(final TreeNode node, boolean[] ancestors)
+	private static String treeToElegantString(final TreeNode node, boolean[] ancestors, Boolean head)
 	{
 		StringBuilder sb = new StringBuilder();
 		for (int index=0; index<ancestors.length; ++index)
@@ -120,20 +121,32 @@ public class TreeUtilities
 		
 		if (node.getItem().isTerminal())
 		{
-			sb.append(node.getItem().getTerminal().getToken()).append("/").append(node.getItem().getTerminal().getTag()).append("\n");
+			sb.append(node.getItem().getTerminal().getToken()).append("/").append(node.getItem().getTerminal().getTag());
+			if (Boolean.TRUE==head) {sb.append(" *");}
+			sb.append("\n");
 		}
 		else
 		{
-			sb.append(node.getItem().getSymbol()).append("\n");
+			sb.append(node.getItem().getSymbol());
+			if (Boolean.TRUE==head) {sb.append(" *");}
+			sb.append("\n");
 			
+			int childHead = -1;
+			if (head!=null)
+			{
+				childHead = HeadFinder.findHead(node);
+			}
 			final int numberOfChildren = node.getChildren().size();
 			int childIndex=1;
+			int childIndexForHead = 0;
 			for (TreeNode child : node.getChildren())
 			{
 				boolean[] childAncestors = Arrays.copyOf(ancestors, ancestors.length+1);
 				childAncestors[ancestors.length] = (childIndex<numberOfChildren);
-				sb.append(treeToElegantString(child, childAncestors));
+				Boolean childIsHead = (head==null?null:(childHead==childIndexForHead));
+				sb.append(treeToElegantString(child, childAncestors, childIsHead));
 				++childIndex;
+				++childIndexForHead;
 			}
 		}
 		return sb.toString();

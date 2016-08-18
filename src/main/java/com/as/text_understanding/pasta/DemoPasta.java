@@ -85,7 +85,7 @@ public class DemoPasta
 				pasta.annotate();
 				List<PredicateAndArguments> pasResult = pasta.getResult();
 				System.out.println();
-				System.out.println(TreeUtilities.treeToElegantString(tree.getRoot()));
+				System.out.println(TreeUtilities.treeToElegantString(tree.getRoot(), true));
 //				System.out.println(TreeUtilities.treeToString(tree));
 				System.out.println(Pasta.pasResultToString(pasResult, false, true));
 				
