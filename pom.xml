@@ -4,7 +4,7 @@
 
 	<groupId>com.github.asher-stern</groupId>
 	<artifactId>text-understanding</artifactId>
-	<version>1.0.2-SNAPSHOT</version>
+	<version>1.0.2</version>
 	<packaging>jar</packaging>
 
 	<name>text-understanding</name>
@@ -62,6 +62,25 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+					<additionalparam>-Xdoclint:none</additionalparam>
+					<!-- <failOnError>false</failOnError> -->
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -79,23 +98,6 @@
 								<id>attach-sources</id>
 								<goals>
 									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.10.4</version>
-						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
-							<!-- <failOnError>false</failOnError> -->
-						</configuration>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
 								</goals>
 							</execution>
 						</executions>

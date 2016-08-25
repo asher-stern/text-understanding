@@ -27,6 +27,25 @@ public class ItemFinder
 	public static final String COORDINATION_TAG = "CC";
 	public static final Set<String> NON_CONTENT_POS_TAGS = buildSet(new String[]{"CC","DT","IN","LS","MD","SYM","TO"});
 	
+	
+	/**
+	 * Returns a list of concepts, where each concept is a list (a sequence) of terminal-nodes, that are assumed to express a single
+	 * "concept" in the the text, like "yellow flower", "group of children", etc. (think about sentences like "a group of children
+	 * traveled to the forest and found a yellow flower".
+	 * <br>
+	 * The returned list of concepts are concepts governed by the given node, i.e., the given node is an ancestor of these concepts,
+	 * in the parse tree. In other words, all the concepts that are part of the given subtree (the given node is the subtree root).
+	 * <p>
+	 * Usually, only one concept is returned, when the given subtree is an argument subtree. However, in case of coordination ("and",
+	 * "or", etc.) more than one concepts is returned. For example "I have a son and a daughter": the second argument of the predicate
+	 * "have" is "a son and a daughter", but it contains two concepts, 1) "son", 2) "daughter".
+	 * <p>
+	 * Each concept is trimmed from non-content terminal nodes, like determiners.
+	 * 
+	 *  
+	 * @param subtree
+	 * @return
+	 */
 	public List<List<TreeTravelNode>> findItems(TreeTravelNode subtree)
 	{
 		List<List<TreeTravelNode>> grossConcepts = findItemsRegardslessContent(subtree, true);
@@ -39,6 +58,11 @@ public class ItemFinder
 		return ret;
 	}
 	
+	/**
+	 * Converts the given list of concepts, which is returned by {@link #findItems(TreeTravelNode)}, into a human-readable string.
+	 * @param concepts
+	 * @return
+	 */
 	public static String itemsToString(final List<List<TreeTravelNode>> concepts)
 	{
 		StringBuilder sb = new StringBuilder();
@@ -64,6 +88,9 @@ public class ItemFinder
 		}
 		return sb.toString();
 	}
+	
+	
+	/////////////// PRIVATE ///////////////
 	
 	private List<List<TreeTravelNode>> findItemsRegardslessContent(TreeTravelNode subtree, boolean forceIncludeFirst)
 	{
@@ -116,10 +143,18 @@ public class ItemFinder
 	
 	
 	/**
-	 * Does not return an empty list. If all should be trimmed, then the first item will not be trimmed.
-	 * @param originalList
-	 * @param predicateToSurvive
-	 * @return
+	 * Trims a list by the given predicate. All the elements at the beginning of the list that are tested as <tt>false</tt>
+	 * by the predicate are not included in the returned list. Similarly, all the elements at the end of the list that are
+	 * tested as <tt>false</tt> are not included in the returned list.
+	 * <p>
+	 * If the given list is not empty, this method does not return an empty list. If all should be trimmed, then
+	 * the first item will not be trimmed.
+	 * 
+	 * @param originalList a list
+	 * @param predicateToSurvive a predicate over the elements of the list, such that all elements at the beginning and the end of 
+	 * the list that are tested as <tt>false</tt> by the predicate are not included in the returned list.
+	 * 
+	 * @return A list similar to the original list, but trimmed at its beginning and its end.
 	 */
 	private static <T> List<T> trimList(List<T> originalList, Predicate<T> predicateToSurvive)
 	{
