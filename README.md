@@ -54,7 +54,7 @@ As a UIMA annotator: the annotator is `com.as.text_understanding.uima_annotators
 
 As for the results, **please note** that the `Predicate` annotation mostly covers also some arguments. The actual predicate can be retrieved by the field `verb` of `Predicate`.
 
-An example program which runs PASTA as a UIMA annotator, from within UIMA's *Document-Analyzer* is provided at `com.as.text_understanding.uima_annotators.pasta.DemoPastaAnnotator`.
+An example program which runs PASTA as a UIMA annotator, from within UIMA's *Document-Analyzer*, is provided at `com.as.text_understanding.uima_annotators.pasta.DemoPastaAnnotator`.
  
 
 
