@@ -18,7 +18,7 @@ For example, given the sentence "*I have a computer that can process natural lan
 
 Predicate-argument structures can be thought of as a shallower approach than *Semantic Role Labeling*, yet more semantically expressive than syntactic parse-trees.
 
-The annotation tool is named **PASTA**, which stands for **P**redicate **A**rgument **S**tructure **A**nnotator.
+The annotation tool is named **PASTA**, which stands for **P**redicate **A**rgument **St**ructure **A**nnotator.
 
 # Usage
 
